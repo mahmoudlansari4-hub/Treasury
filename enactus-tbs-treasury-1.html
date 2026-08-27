@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Enactus TBS — Treasury</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ETBS Treasury">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFC222">
+<link id="favicon-link" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312131A'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='30' font-weight='700' fill='%23FFC222' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<link id="apple-touch-link" rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312131A'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='30' font-weight='700' fill='%23FFC222' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --gold: #FFC222;
+    --gold-deep: #A8710A;
+    --ink: #12131A;
+    --muted: #6B7280;
+    --bg: #F5F6F8;
+    --card: #FFFFFF;
+    --border: #E4E6EB;
+    --green: #16A34A;
+    --red: #DC2626;
+    --teal: #0EA5A0;
+    --orange: #EA580C;
+    --violet: #7C3AED;
+    --blue: #2563EB;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 56px;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .muted { color: var(--muted); }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 18px 16px 40px; }
+
+  button, input, select, textarea { font-family: inherit; }
+  button { cursor: pointer; }
+  input, select, textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 9px;
+    padding: 9px 11px;
+    font-size: 14px;
+    outline: none;
+  }
+  input::placeholder, textarea::placeholder { color: #9CA3AF; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255,194,34,0.18);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+    padding: 16px;
+  }
+
+  /* header */
+  .header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .logo-badge {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--ink); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; flex-shrink: 0;
+    overflow: hidden;
+  }
+  .logo-badge img { width: 100%; height: 100%; object-fit: cover; }
+  .org-name { font-size: 12.5px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+  .page-title { font-size: 24px; font-weight: 800; margin: 1px 0 0; }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 18px 0 18px; overflow-x: auto; }
+  .tab {
+    background: none; border: none; padding: 10px 4px; margin-right: 18px;
+    font-size: 13.5px; font-weight: 600; color: var(--muted);
+    border-bottom: 2.5px solid transparent; white-space: nowrap;
+  }
+  .tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+
+  /* hero stat */
+  .hero-card {
+    background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+    border-radius: 14px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+  .hero-value { font-size: 30px; font-weight: 700; }
+
+  /* dashboard */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat-card { padding: 14px; }
+  .stat-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-size: 18px; font-weight: 700; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 10px; height: 130px; padding-top: 10px; }
+  .bar-chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; min-width: 0; }
+  .bar-chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 100px; width: 100%; justify-content: center; }
+  .bar-chart-bar { width: 9px; border-radius: 3px 3px 0 0; min-height: 2px; }
+  .bar-chart-label { font-size: 10px; color: var(--muted); margin-top: 6px; font-weight: 600; }
+  .chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 11px; color: var(--muted); font-weight: 600; }
+  .chart-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+  .catbar-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+  .catbar-label { font-size: 12.5px; font-weight: 600; width: 108px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .catbar-track { flex: 1; height: 8px; border-radius: 999px; background: #EEF0F3; overflow: hidden; }
+  .catbar-fill { height: 100%; border-radius: 999px; }
+  .catbar-amt { font-size: 11.5px; font-weight: 700; width: 76px; text-align: right; flex-shrink: 0; }
+
+  /* account cards */
+  .acct-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px,1fr)); gap: 10px; margin-bottom: 18px; }
+  .acct-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .acct-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .acct-avatar { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10.5px; font-weight: 800; flex-shrink: 0; }
+  .acct-name { font-size: 12.5px; font-weight: 700; }
+  .acct-value { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .icon-btn { background: none; border: none; color: var(--muted); padding: 3px; display: flex; }
+  .icon-btn:hover { color: var(--ink); }
+  .bar-track { height: 6px; border-radius: 999px; background: #EEF0F3; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; }
+
+  /* pills / badges */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    border: 1px solid var(--border); color: var(--ink);
+  }
+
+  /* buttons */
+  .btn { border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; border: 1px solid var(--border); background: #fff; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; }
+  .btn:hover { border-color: #C9CDD6; }
+  .btn-primary { background: var(--ink); color: var(--gold); border: none; }
+  .btn-primary:hover { background: #23242E; }
+  .btn-ghost { background: none; border: none; color: var(--muted); }
+
+  /* transaction list */
+  .tx-row { display: flex; align-items: center; padding: 11px 2px; border-bottom: 1px solid var(--border); gap: 10px; }
+  .tx-row:last-child { border-bottom: none; }
+  .tx-date-cell { font-size: 11px; color: var(--muted); width: 58px; flex-shrink: 0; line-height: 1.35; }
+  .tx-time { font-size: 9.5px; opacity: 0.75; }
+  .tx-edit-form { padding: 12px; margin: 6px 0; background: #FAFAFB; border: 1px solid var(--border); border-radius: 12px; width: 100%; }
+  .tx-main { min-width: 0; flex: 1; }
+  .tx-cat { font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-meta { font-size: 11.5px; color: var(--muted); }
+  .tx-amt { font-size: 13.5px; font-weight: 700; flex-shrink: 0; display: flex; align-items: center; gap: 3px; }
+
+  form.panel { margin-top: 12px; }
+  .row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 110px; }
+  .seg { display: flex; gap: 8px; margin-bottom: 12px; }
+  .seg button { flex: 1; padding: 9px 10px; border-radius: 9px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--border); background: #fff; color: var(--ink); }
+  .seg button.active-income { background: var(--green); border-color: var(--green); color: #fff; }
+  .seg button.active-expense { background: var(--red); border-color: var(--red); color: #fff; }
+  .seg button.active-transfer { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .field-label { font-size: 11px; font-weight: 700; color: var(--muted); margin: 2px 2px 5px; letter-spacing: 0.03em; }
+  .acct-pick { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .acct-pick button { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); background: #fff; color: var(--ink); }
+  .acct-pick button.active { background: var(--gold); border-color: var(--gold); }
+
+  .section-title { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 800; margin: 22px 0 10px; }
+
+  .empty { padding: 22px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  .opp-card { margin-bottom: 10px; }
+  .opp-name { font-size: 14.5px; font-weight: 700; margin-bottom: 5px; }
+  .opp-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; align-items: center; }
+  .opp-notes { font-size: 12.5px; color: #3F4451; }
+  .status-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+  .status-row button { font-size: 10.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); background: #fff; }
+  .status-row button.active { background: var(--ink); color: var(--gold); border-color: var(--ink); }
+
+  .note-card { margin-bottom: 10px; }
+  .note-head { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .note-title { font-size: 14px; font-weight: 700; }
+  .note-date { font-size: 11px; color: var(--muted); }
+  .note-body { font-size: 13px; margin-top: 10px; white-space: pre-wrap; line-height: 1.5; }
+
+  .member-avatar { width: 34px; height: 34px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+  .fee-row { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-label { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toggle-pill { border: none; border-radius: 999px; padding: 5px 13px; font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .toggle-pill.paid { background: var(--green); }
+  .toggle-pill.unpaid { background: var(--red); }
+  .fee-amount-input { width: 68px; flex-shrink: 0; padding: 5px 6px; font-size: 12px; text-align: right; }
+  .tick-list { max-height: 240px; overflow-y: auto; margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; padding: 4px 8px; }
+  .tick-row { display: flex; align-items: center; gap: 8px; padding: 7px 2px; font-size: 12.5px; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--border); }
+  .tick-row:last-child { border-bottom: none; }
+  .tick-row input[type="checkbox"] { width: 15px; height: 15px; flex-shrink: 0; }
+
+  .insight-card { display: flex; gap: 12px; margin-bottom: 10px; }
+  .insight-icon { width: 34px; height: 34px; border-radius: 9px; background: #FFF6DE; color: var(--gold-deep); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .insight-title { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; }
+  .insight-desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+
+  .chat-panel { display: flex; flex-direction: column; height: 420px; padding: 0; overflow: hidden; }
+  .chat-scroll { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .bubble { padding: 9px 12px; border-radius: 13px; font-size: 13.5px; line-height: 1.45; max-width: 82%; white-space: pre-wrap; }
+  .bubble-user { background: var(--ink); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+  .bubble-ai { background: #F1F2F5; color: var(--ink); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .chat-row-user { display: flex; align-items: center; gap: 6px; align-self: flex-end; max-width: 100%; }
+  .chat-edit-btn { opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+  .chat-row-user:hover .chat-edit-btn { opacity: 1; }
+  .chat-edit-form { align-self: flex-end; width: 90%; background: #FAFAFB; border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+  .chat-edit-form textarea { font-size: 13px; }
+  .bubble code { background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 0.9em; }
+  .bubble ul { text-align: left; }
+  .bubble li { margin: 2px 0; }
+  .chat-form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--border); }
+  .starter-chip { border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 6px 11px; font-size: 12px; font-weight: 600; }
+  .starter-chip:hover { border-color: var(--gold); }
+
+  .topbar { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 4px; flex-wrap: wrap; }
+  .topbar .btn { font-size: 12px; padding: 6px 10px; }
+
+  svg.icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* lock screen */
+  .lock-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .lock-card { width: 100%; max-width: 340px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 26px 24px; box-shadow: 0 2px 10px rgba(16,24,40,0.06); text-align: center; }
+  .lock-logo { width: 46px; height: 46px; border-radius: 12px; background: var(--ink); color: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 19px; margin: 0 auto 14px; overflow: hidden; }
+  .lock-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .lock-title { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .lock-sub { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+  .pin-input { text-align: center; font-size: 22px; letter-spacing: 6px; font-family: 'IBM Plex Mono', monospace; padding: 12px; margin-bottom: 10px; }
+  .lock-error { font-size: 12px; color: var(--red); font-weight: 600; margin-bottom: 10px; min-height: 15px; }
+  .lock-link { background: none; border: none; color: var(--muted); font-size: 12px; text-decoration: underline; margin-top: 12px; }
+  .lock-warning { font-size: 12.5px; color: var(--red); background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.5; text-align: left; }
+
+  /* pin modal */
+  .pin-modal-overlay { position: fixed; inset: 0; background: rgba(18,19,26,0.55); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+  .pin-modal { width: 100%; max-width: 320px; background: #fff; border-radius: 16px; padding: 20px; }
+  .pin-modal-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .pin-modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .pin-modal-input { text-align: center; font-size: 20px; letter-spacing: 5px; font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px; }
+  .pin-modal-error { font-size: 11.5px; color: var(--red); font-weight: 600; margin-bottom: 8px; }
+  .pin-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+
+  /* cloud sync */
+  .sync-badge { font-size: 11px; font-weight: 700; color: var(--muted); align-self: center; margin-right: auto; }
+  .sync-badge.ok { color: var(--green); }
+  .sync-badge.err { color: var(--red); }
+  .sync-modal-overlay { position: fixed; inset: 0; background: rgba(18,19,26,0.55); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+  .sync-modal { width: 100%; max-width: 380px; background: #fff; border-radius: 16px; padding: 22px; max-height: 90vh; overflow-y: auto; }
+  .sync-modal-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .sync-modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+  .sync-modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); }
+  .sync-modal-row { margin-bottom: 10px; }
+  .sync-modal-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .sync-status-line { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+
+  /* monthly report */
+  #report-print-area { display: none; }
+  .report-modal-overlay { position: fixed; inset: 0; background: rgba(18,19,26,0.55); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+  .report-modal { width: 100%; max-width: 340px; background: #fff; border-radius: 16px; padding: 22px; }
+  .report-modal-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .report-modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .report-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #report-print-area, #report-print-area * { visibility: visible; }
+    #report-print-area { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
+    .report-page { padding: 0; }
+    .report-tx-table tr { page-break-inside: avoid; }
+  }
+  .report-page { font-family: 'Inter', system-ui, sans-serif; color: #14151A; max-width: 720px; margin: 0 auto; padding: 24px; }
+  .report-header { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #FFC222; padding-bottom: 14px; margin-bottom: 10px; }
+  .report-org { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #6B7280; }
+  .report-title { font-size: 20px; font-weight: 800; }
+  .report-month { font-size: 14px; font-weight: 600; color: #6B7280; }
+  .report-meta { font-size: 11px; color: #9CA3AF; margin-bottom: 20px; }
+  .report-page h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #14151A; border-bottom: 1px solid #E4E6EB; padding-bottom: 5px; margin: 22px 0 8px; }
+  .report-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .report-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #6B7280; padding: 5px 8px; border-bottom: 1.5px solid #14151A; }
+  .report-table td { padding: 6px 8px; border-bottom: 1px solid #EEF0F3; }
+  .report-table tr:last-child td { border-bottom: none; }
+  .report-table td.num, .report-table th.num { text-align: right; font-family: 'IBM Plex Mono', monospace; }
+  .report-pos { color: #16A34A; font-weight: 700; }
+  .report-neg { color: #DC2626; font-weight: 700; }
+  .report-footer { margin-top: 28px; padding-top: 10px; border-top: 1px solid #E4E6EB; font-size: 10px; color: #9CA3AF; }
+  .report-empty { font-size: 12.5px; color: #9CA3AF; padding: 10px 0; }
+
+  @media (max-width: 420px) {
+    .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="lock-screen"></div>
+<div id="report-print-area"></div>
+<div class="wrap" id="app-wrap" style="display:none;">
+
+  <div class="topbar">
+    <span id="sync-badge" class="sync-badge"></span>
+    <button class="btn" onclick="Sync.open()">☁ Cloud sync</button>
+    <button class="btn" onclick="Report.open()">🖨 Monthly report</button>
+    <button class="btn" onclick="App.exportData()">⇩ Export data</button>
+    <button class="btn" onclick="document.getElementById('import-file').click()">⇧ Import data</button>
+    <button class="btn" onclick="Lock.changePin()">🔒 Change PIN</button>
+    <button class="btn" onclick="Lock.lockNow()">Lock</button>
+    <button class="btn" style="color:var(--red);" onclick="App.resetAll()">Reset data</button>
+    <input type="file" id="import-file" accept="application/json" style="display:none" onchange="App.importData(event)">
+  </div>
+
+  <div class="header">
+    <div class="logo-badge" id="header-logo">E</div>
+    <div>
+      <div class="org-name">ENACTUS TBS</div>
+      <div class="page-title">Treasury</div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <main id="content"></main>
+</div>
+
+<script>
+// ============== ICONS ==============
+const ICON = {
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  chevron: '<polyline points="6 9 12 15 18 9"/>',
+  pencil: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  ext: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+  up: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+  down: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  bulb: '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/>',
+  wallet: '<path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"/><path d="M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-4"/><path d="M17 12a2 2 0 0 0 0 4h4v-4Z"/>',
+  swap: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  key: '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>',
+};
+function svg(name, size) { return `<svg class="icon" style="width:${size||14}px;height:${size||14}px" viewBox="0 0 24 24">${ICON[name]}</svg>`; }
+
+// ============== CONSTANTS ==============
+const LOGO_DATA_URI = "data:image/png;base64,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";
+
+const ACCOUNTS = [
+  { id: 'carte_bancaire', label: 'Bank Account', short: 'BA', color: 'var(--teal)' },
+  { id: 'd17', label: 'D17', short: 'D17', color: 'var(--orange)' },
+  { id: 'cash', label: 'Cash', short: '$', color: 'var(--violet)' },
+];
+const INCOME_CATEGORIES = ['Sponsorship','Membership fees','Grant / competition prize','Fundraising event','Merchandise sales','Donation','Accounts receivable','Other income'];
+const EXPENSE_CATEGORIES = ['Event costs','Transport','Printing & design','Delegation (World Cup)','Registration fees','Enactus Tunisia fee','Venue','Catering','Office supplies','Accounts payable','Other expense'];
+const OPP_TYPES = ['Grant','Competition','Incubator','Strategic partner'];
+const OPP_STATUSES = ['To review','Applied','Won','Rejected','Expired'];
+const STATUS_COLOR = { 'To review':'var(--muted)', 'Applied':'var(--gold-deep)', 'Won':'var(--green)', 'Rejected':'var(--red)', 'Expired':'var(--muted)' };
+const TABS = [
+  { id: 'treasury', label: 'Treasury' },
+  { id: 'apar', label: 'AP / AR' },
+  { id: 'members', label: 'Members' },
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'opportunities', label: 'Opportunities' },
+  { id: 'notes', label: 'Handover notes' },
+  { id: 'insights', label: 'Assistant' },
+];
+const STARTER_PROMPTS = ["What's our D17 balance?", "Summarize upcoming deadlines", "Draft a handover summary for the next FO"];
+const SEED_OPPORTUNITIES = [
+  { id: 'seed-hm', name: 'H&M Foundation Global Change Award', type: 'Grant', deadline: '', status: 'To review', link: '', notes: 'Opens September 2026. Strong fit for Jean-Z / PigmentOCO.' },
+  { id: 'seed-mit', name: 'MIT Solve', type: 'Competition', deadline: '', status: 'To review', link: '', notes: 'Opens September 2026.' },
+];
+
+// Curated from the "Financial Opportunities 2026–2027" workbook (compiled 18 Jul 2026),
+// rechecked against 25 Aug 2026: expired windows marked Expired, distant/annual cycles
+// noted with their next expected opening, and the Anna Lindh Foundation call dropped —
+// the source itself flagged it as a weak fit. Names overlapping the two seeds above are
+// skipped at import time rather than duplicated.
+const IMPORTED_OPPORTUNITIES_2026 = [
+  { name: "Green'TIC 2026 (APIA)", type: 'Competition', deadline: '2026-07-31', status: 'Expired', link: '', notes: "2026 window closed 31 Jul, before this was imported — watch for a 2027 cycle. Cash prizes + mentorship + incubation pipeline for digital/AI agriculture. Best fit: Agrotracking, EcoGuard. Source: managers.tn" },
+  { name: 'MIT Solve — Global Challenges', type: 'Competition', deadline: '', status: 'To review', link: '', notes: '(Update to existing MIT Solve entry.) Opens September 2026. ≥$100,000 unrestricted funding + Solve Challenge Finals platform (NYC), mentorship, pro-bono legal support. High effort. Best fit: Jean-Z, Agrotracking. Source: solve.mit.edu' },
+  { name: 'H&M Foundation Global Change Award 2027', type: 'Grant', deadline: '', status: 'To review', link: '', notes: '(Update to existing H&M entry.) Opens roughly Aug–Oct 2026 — may already be opening. Non-dilutive grants (~€12M to 66 teams since 2015) for early-stage textile-decarbonization innovation. Excellent fit: Jean-Z (wet processing); also TexStyle. Source: hmfoundation.com' },
+  { name: 'Hult Prize 2026–27', type: 'Competition', deadline: '', status: 'To review', link: '', notes: 'Registration opens ~Sep–Oct 2026. $1M seed funding to the winning team (~10% equity), mentorship, Ashridge House accelerator. Teams of 2–4 enrolled students; for-profit venture supporting an SDG. Best fit: Jean-Z, TexStyle, Koolny. Source: hultprize.org' },
+  { name: 'UNDP timbuktoo AgriTech Incubation', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Rolling, quarterly cohorts — apply anytime. Continental ecosystem of incubators/mentors/investors for climate-smart ag. Near-perfect fit: Agrotracking. Source: timbuktoo (UNDP)' },
+  { name: 'Arab Girl & Technology Prize', type: 'Competition', deadline: '2026-08-31', status: 'To review', link: '', notes: "Individual-level prize, not club/project funding — only relevant if a member enters personally. App/website or awareness campaign, ages 18–24. Source: lapresse.tn" },
+  { name: 'GEF Small Grants Programme Tunisia (PMF/FEM via UNDP)', type: 'Grant', deadline: '', status: 'To review', link: '', notes: "Recurring calls via UNDP procurement notices (biodiversity, climate, forests, water) — monitor for the next round (OP8). Up to ~USD 50,000/project. Requires a legally registered Tunisian association as applicant (GDA/SMSA) — since Enactus TBS has no legal personality, this would need a host association. Best fit: EcoGuard, Agrotracking, Jean-Z (water). Source: sgp.undp.org" },
+  { name: 'US Embassy Tunis — Public Diplomacy APS FY2026', type: 'Grant', deadline: '', status: 'To review', link: '', notes: "$10,000–$200,000 from a $400K pool. Needs a genuine 'American connection' angle (economic opportunity, innovation, STEM, education, US-Tunisia ties). Entity-level fit (training/exchange). Source: tn.usembassy.gov" },
+  { name: 'AU–EU Youth Action Lab — Entrepreneurship Grants', type: 'Grant', deadline: '', status: 'To review', link: '', notes: 'Last call closed 7 Jan 2026; annual, next expected ~Dec 2026. €30,000/organisation for youth-led social enterprises. Source: aueuyouth.com' },
+  { name: 'Impact Partner — BoostImpact / YIEP DAPP', type: 'Grant', deadline: '', status: 'To review', link: '', notes: '~5,000 TND equity-free + technical support for youth-led (18–35) social/environmental projects. Recurring calls, rolling pipeline. Best fit: Entity-level, Koolny, EcoGuard. Source: impactpartner.co' },
+  { name: 'UNDP Tunisia calls (Entrepreneuriat pour le Développement)', type: 'Grant', deadline: '', status: 'To review', link: '', notes: '~30,000–60,000 TND/org historically, sometimes region-specific. Ad hoc via procurement-notices.undp.org — worth a monthly check. Source: undp.org/tunisia' },
+  { name: 'Growing Roots Grant Program', type: 'Grant', deadline: '2026-02-28', status: 'Expired', link: '', notes: '2026 deadline already passed (28 Feb) — annual program, watch for the 2027 call. Up to USD 10,000 for youth-led climate initiatives in the Global South. Best fit: EcoGuard, Agrotracking. Source: fundsforngos.org' },
+  { name: 'POESAM 2027 (Orange Social Venture Prize)', type: 'Competition', deadline: '', status: 'To review', link: '', notes: '2026 round closed (ran 26 Mar–10 May); 2027 expected to open ~late March 2027 — distant but worth prepping. €10,000–25,000 for top 3 + €20,000 Women\'s Prize, plus ODC incubation. Best fit: Agrotracking, Indect, Koolny. Source: poesam.orange.com' },
+  { name: 'Entrepreneurship World Cup — Tunisia', type: 'Competition', deadline: '', status: 'To review', link: '', notes: '2026 round closed 31 May; next expected ~spring 2027. Up to $1M in the global investment pool. Best fit: TexStyle, Jean-Z. Source: UTICA / World Manufacturing Congress' },
+  { name: 'Startup World Cup — Tunisia national final', type: 'Competition', deadline: '', status: 'To review', link: '', notes: '2026 final already held; next Tunisia round expected ~Jan–Mar 2027. National winner advances to the $1M California global final. Best fit: Agrotracking, Indect. Source: Tunisia Digital Summit / TPM Events' },
+  { name: 'GoGettaz Agripreneur Prize 2027', type: 'Competition', deadline: '', status: 'To review', link: '', notes: '2026 closed 28 Jun; reopens ~May 2027 but requires registration ahead of time — worth prepping early. $50,000 each to a male-led and a female-led venture, plus $60,000 impact awards. Requires a legally registered agribusiness HQ\'d in an AU member state. Best fit: Agrotracking, EcoGuard, Indect. Source: gogettaz.africa' },
+  { name: 'Flat6Labs Tunis — Seed Program', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Cycle-based via F6S, ~1–2 cohorts/year — check for the next opening. Cash up to TND 200K plus a 200K–800K TND follow-on, strong mentorship, office space; takes 10–15% equity and requires the venture to be ready to incorporate. Best fit: Agrotracking, Indect; Jean-Z if incorporated. Source: f6s.com/flat6labs' },
+  { name: "Lab'ess — Incubation", type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Cohort 14 closed 6 Jan 2026; cohort 15 expected ~Dec 2026–Jan 2027. Financing up to 35,000 TND (honor loan) plus environmental-impact measurement, networking, pitch support. Best fit: Jean-Z, EcoGuard, TexStyle (SDG 11 & 12 track). Source: labess.tn' },
+  { name: "Lab'ess — Acceleration", type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Annual call (first promo mid-2025) — worth monitoring. Financing up to 100,000 TND/project. Requires post-revenue/traction stage — relevant once a project like Jean-Z starts generating pilot revenue. Source: labess.tn' },
+  { name: 'BIATLABS', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'No fixed calendar — apply directly whenever ready. Free mentorship (no equity taken), full incubation cycle, space at BIAT HQ. Best fit: Koolny, TexStyle, Indect. Source: biatlabs.com' },
+  { name: 'Afkar Incubator', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Rolling/annual cohorts, free program. Design thinking, pitching, storytelling training plus business-plan support. Best fit: Koolny, EcoGuard. Source: afkar.tn' },
+  { name: 'Impact Partner — BoostImpact / MADAR Corporates', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Recurring calls, runs in rounds. BoostImpact: technical support + 5,000 TND equity-free. MADAR: reverse-pitching with corporates, plus a 10,000 TND prototype grant. Best fit: Jean-Z/TexStyle via MADAR; EcoGuard. Source: impactpartner.co' },
+  { name: 'Orange Digital Center Tunis', type: 'Incubator', deadline: '', status: 'To review', link: '', notes: 'Ongoing/rolling. Free training and fablab access, acceleration via Orange Fab, feeds into POESAM. Best fit: Indect, Agrotracking, Koolny (hardware prototyping). Source: Orange Digital Center' },
+];
+
+function namesLikelyMatch(a, b) {
+  const na = (a || '').trim().toLowerCase();
+  const nb = (b || '').trim().toLowerCase();
+  if (!na || !nb) return false;
+  return na.includes(nb) || nb.includes(na);
+}
+
+// Runs once per device: merges the curated import list into whatever opportunities
+// already exist. New entries are added fresh; entries matching one of the two original
+// seeds are used to enrich that seed ONLY if it's still at its default/unedited text —
+// if the user already customized it, their version is left alone.
+function applyOpportunityImportOnce() {
+  if (localStorage.getItem('etbs_opps_import_v1') === '1') return;
+  let changed = false;
+  IMPORTED_OPPORTUNITIES_2026.forEach(entry => {
+    const existingIdx = state.opportunities.findIndex(o => namesLikelyMatch(o.name, entry.name));
+    if (existingIdx === -1) {
+      state.opportunities.push({ id: uid(), name: entry.name, type: entry.type, deadline: entry.deadline, status: entry.status, link: entry.link, notes: entry.notes });
+      changed = true;
+    } else {
+      const existing = state.opportunities[existingIdx];
+      const seedDefault = SEED_OPPORTUNITIES.find(s => namesLikelyMatch(s.name, existing.name));
+      if (seedDefault && existing.notes === seedDefault.notes) {
+        state.opportunities[existingIdx] = { ...existing, type: entry.type, deadline: entry.deadline, status: entry.status, notes: entry.notes };
+        changed = true;
+      }
+      // otherwise: already customized by the user (or matched something unrelated) — leave it alone
+    }
+  });
+  localStorage.setItem('etbs_opps_import_v1', '1');
+  if (changed) {
+    saveJSON('etbs_opportunities', state.opportunities);
+    syncPushInBackground();
+  }
+}
+
+// From the uploaded Treasury.xlsx — 11 receivables, 1 payable. Where the sheet had a
+// "Category: person(s)" format, that's split into description + counterparty; plain
+// names/codes are kept as the description as written, since their meaning wasn't spelled
+// out and shouldn't be guessed. No account or due date was given, so these default to
+// Cash — edit either on any entry once imported. The sheet's own top summary (Bank
+// Account 400, D17 60, Cash 670) isn't applied here since only receivables/payables were
+// asked for, not resetting balances.
+const IMPORTED_AP_AR_2026 = [
+  { kind: 'receivable', description: 'Enactor Pack', counterparty: 'Ibti w Syrine', amount: 100 },
+  { kind: 'receivable', description: 'Lina', counterparty: '', amount: 15 },
+  { kind: 'receivable', description: 'Prospection', counterparty: 'Chaima', amount: 35 },
+  { kind: 'receivable', description: 'Membership Fees', counterparty: 'Chaima w Farah', amount: 60 },
+  { kind: 'receivable', description: 'Lina Mel', counterparty: '', amount: 25 },
+  { kind: 'receivable', description: 'Chaima D17', counterparty: '', amount: 4 },
+  { kind: 'receivable', description: 'Shooting', counterparty: 'Rayen, Chaima and Farah', amount: 60 },
+  { kind: 'receivable', description: 'Old Account Mme Amira', counterparty: '', amount: 80 },
+  { kind: 'receivable', description: 'EWC24', counterparty: '', amount: 3000 },
+  { kind: 'receivable', description: 'AWA', counterparty: '', amount: 3000 },
+  { kind: 'receivable', description: 'ENE26', counterparty: '', amount: 2700 },
+  { kind: 'payable', description: 'Oussema', counterparty: '', amount: 5 },
+];
+
+function applyApArImportOnce() {
+  if (localStorage.getItem('etbs_apar_import_v1') === '1') return;
+  let added = false;
+  IMPORTED_AP_AR_2026.forEach(entry => {
+    const exists = state.payables.some(p =>
+      p.kind === entry.kind &&
+      p.description.trim().toLowerCase() === entry.description.trim().toLowerCase() &&
+      Number(p.amount) === Number(entry.amount)
+    );
+    if (!exists) {
+      state.payables.push({
+        id: uid(), kind: entry.kind, description: entry.description, counterparty: entry.counterparty,
+        amount: entry.amount, dueDate: '', account: 'cash', status: 'pending', createdAt: Date.now(),
+      });
+      added = true;
+    }
+  });
+  localStorage.setItem('etbs_apar_import_v1', '1');
+  if (added) {
+    saveJSON('etbs_payables', state.payables);
+    syncPushInBackground();
+  }
+}
+
+const SEED_NOTES = [
+  { id: 'seed-constraints', title: 'Treasury constraints — read before touching money', date: todayISO(),
+    content: "Enactus TBS has no legal personality, so the club can't hold funds or sign as itself. Grants legally belong to the project holder who won them, not to the club — this matters for who controls the money and how it's reported here. Enactus Tunisia takes a 10% fee on flows through the bank, so budget for that when projecting how much a sponsorship or grant actually nets the team. One idea under consideration: adding a clause to future project holder contracts giving the club a percentage share of grant winnings." },
+];
+
+const AVATAR_COLORS = ['#0EA5A0', '#EA580C', '#7C3AED', '#B8860B', '#0891B2', '#DB2777'];
+function avatarColor(seed) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+function initials(name) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+// ============== UTILS ==============
+function fmtDT(n) {
+  const v = Number(n) || 0;
+  const sign = v < 0 ? '-' : '';
+  return sign + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' DT';
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }); }
+  catch(e) { return d; }
+}
+function txDateCell(t) {
+  return `<div class="tx-date-cell"><div class="mono">${fmtDate(t.date)}</div>${t.time ? `<div class="mono tx-time">${esc(t.time)}</div>` : ''}</div>`;
+}
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function nowHHMM() { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function daysUntil(d) {
+  if (!d) return null;
+  return Math.round((new Date(d+'T00:00:00') - new Date(todayISO()+'T00:00:00')) / 86400000);
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+
+// Minimal markdown for assistant chat bubbles. Escapes everything first (so it's safe),
+// then re-introduces a small, fixed set of formatting: **bold**, `code`, "- " bullets,
+// and line breaks. Deliberately tiny — not a full markdown engine.
+function mdLite(raw) {
+  let s = esc(raw == null ? '' : raw);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  const lines = s.split('\n');
+  let html = '', inList = false;
+  for (const line of lines) {
+    const m = line.match(/^\s*[-*]\s+(.*)$/);
+    if (m) {
+      if (!inList) { html += '<ul style="margin:6px 0;padding-left:18px;">'; inList = true; }
+      html += '<li>' + m[1] + '</li>';
+    } else {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += line + '<br>';
+    }
+  }
+  if (inList) html += '</ul>';
+  return html.replace(/<br>$/, '');
+}
+
+// Restyles a simple pill button group (single "active" class) in place, without
+// re-rendering the surrounding form — so any text already typed into other fields
+// in that same form isn't lost.
+function selectPill(btn) {
+  const group = btn.parentElement;
+  group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+// Same idea for the income/expense/transfer segmented control, which uses one of
+// three different active classes instead of a single shared one.
+function selectSegPill(btn, activeClass) {
+  const group = btn.parentElement;
+  group.querySelectorAll('button').forEach(b => b.classList.remove('active-income', 'active-expense', 'active-transfer'));
+  btn.classList.add(activeClass);
+}
+
+// ============== STORAGE ==============
+function loadJSON(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch (e) { return fallback; }
+}
+function saveJSON(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error('save failed', key, e); }
+}
+
+// ============== CRYPTO (PIN lock + encrypted backups) ==============
+function bufToB64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function b64ToBuf(b64) { return Uint8Array.from(atob(b64), c => c.charCodeAt(0)); }
+
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function deriveAesKey(pin, salt) {
+  const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptWithPin(pin, plaintext) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveAesKey(pin, salt);
+  const cipherBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(plaintext));
+  return { salt: bufToB64(salt), iv: bufToB64(iv), data: bufToB64(cipherBuf) };
+}
+
+async function decryptWithPin(pin, payload) {
+  const key = await deriveAesKey(pin, b64ToBuf(payload.salt));
+  const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBuf(payload.iv) }, key, b64ToBuf(payload.data));
+  return new TextDecoder().decode(plainBuf);
+}
+
+// Reusable numeric-PIN prompt modal. Resolves to the entered digits, or null if cancelled.
+function askPin({ title, subtitle, confirmLabel }) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'pin-modal-overlay';
+    overlay.innerHTML = `
+      <div class="pin-modal">
+        <div class="pin-modal-title">${esc(title)}</div>
+        ${subtitle ? `<div class="pin-modal-sub">${esc(subtitle)}</div>` : ''}
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="pin-modal-input" placeholder="••••">
+        <div class="pin-modal-error" style="display:none;"></div>
+        <div class="pin-modal-actions">
+          <button type="button" class="btn" data-act="cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" data-act="ok">${esc(confirmLabel || 'Continue')}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('.pin-modal-input');
+    const errEl = overlay.querySelector('.pin-modal-error');
+    setTimeout(() => input.focus(), 0);
+    function cleanup(val) { document.body.removeChild(overlay); resolve(val); }
+    overlay.querySelector('[data-act="cancel"]').onclick = () => cleanup(null);
+    overlay.querySelector('[data-act="ok"]').onclick = submit;
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    function submit() {
+      const v = input.value.trim();
+      if (!/^[0-9]{4,8}$/.test(v)) { errEl.textContent = 'Enter 4–8 numbers.'; errEl.style.display = 'block'; return; }
+      cleanup(v);
+    }
+  });
+}
+
+// ============== CLOUD SYNC (optional — sync shared data via a Google Sheet) ==============
+
+function syncUrl() { return localStorage.getItem('etbs_sync_url') || ''; }
+function syncSecret() { return localStorage.getItem('etbs_sync_secret') || ''; }
+function syncConnected() { return !!(syncUrl() && syncSecret()); }
+function syncReady() { return syncConnected() && localStorage.getItem('etbs_sync_ready') === '1'; }
+function syncLastAt() { return localStorage.getItem('etbs_sync_last') || ''; }
+
+async function cloudGetAll() {
+  const url = syncUrl();
+  const res = await fetch(`${url}?action=getAll&secret=${encodeURIComponent(syncSecret())}`);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.data || {};
+}
+
+async function cloudSetKey(key, value) {
+  const url = syncUrl();
+  const res = await fetch(`${url}?action=set&secret=${encodeURIComponent(syncSecret())}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids a CORS preflight Apps Script can't answer
+    body: JSON.stringify({ key, value }),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return true;
+}
+
+// Push every shared-data key currently in local state up to the sheet.
+async function cloudPushAll() {
+  await cloudSetKey('transactions', state.transactions);
+  await cloudSetKey('adjustments', state.adjustments);
+  await cloudSetKey('opportunities', state.opportunities);
+  await cloudSetKey('notes', state.notes);
+  await cloudSetKey('payables', state.payables);
+  await cloudSetKey('members', state.members);
+  await cloudSetKey('feeEvents', state.feeEvents);
+  await cloudSetKey('feeParticipants', state.feeParticipants);
+  localStorage.setItem('etbs_sync_last', new Date().toISOString());
+}
+
+// Pull the sheet's data down and make it this device's working copy.
+async function cloudPullAll() {
+  const data = await cloudGetAll();
+  if (data.transactions) { state.transactions = JSON.parse(data.transactions); saveJSON('etbs_transactions', state.transactions); }
+  if (data.adjustments) { state.adjustments = JSON.parse(data.adjustments); saveJSON('etbs_adjustments', state.adjustments); }
+  if (data.opportunities) { state.opportunities = JSON.parse(data.opportunities); saveJSON('etbs_opportunities', state.opportunities); }
+  if (data.notes) { state.notes = JSON.parse(data.notes); saveJSON('etbs_notes', state.notes); }
+  if (data.payables) { state.payables = JSON.parse(data.payables); saveJSON('etbs_payables', state.payables); }
+  if (data.members) { state.members = JSON.parse(data.members); saveJSON('etbs_members', state.members); }
+  if (data.feeEvents) { state.feeEvents = JSON.parse(data.feeEvents); saveJSON('etbs_fee_events', state.feeEvents); }
+  if (data.feeParticipants) { state.feeParticipants = JSON.parse(data.feeParticipants); saveJSON('etbs_fee_participants', state.feeParticipants); }
+  localStorage.setItem('etbs_sync_last', new Date().toISOString());
+}
+
+// Called after any shared-data mutation. Saves locally (always) and, once this device
+// is reconciled with the sheet, best-effort pushes the change up too.
+let syncStatus = 'idle'; // idle | syncing | error
+async function syncPushInBackground() {
+  if (!syncReady()) return;
+  syncStatus = 'syncing';
+  renderSyncBadge();
+  try {
+    await cloudPushAll();
+    syncStatus = 'idle';
+  } catch (err) {
+    syncStatus = 'error';
+    console.error('cloud push failed', err);
+  }
+  renderSyncBadge();
+}
+
+// ============== STATE ==============
+const state = {
+  activeTab: 'treasury',
+  transactions: [],
+  adjustments: { carte_bancaire: 0, d17: 0, cash: 0 },
+  opportunities: [],
+  notes: [],
+  payables: [],
+  members: [],
+  feeEvents: [],
+  feeParticipants: [],
+  loggedBy: '',
+  geminiKey: '',
+  chatMessages: [],
+  chatLoading: false,
+  ui: {
+    showTxForm: false, txType: 'expense', txAccount: 'cash',
+    txFromAccount: 'cash', txToAccount: 'd17',
+    editingTxId: null, editTx: null,
+    filterAccount: 'all', filterType: 'all', search: '',
+    showOppForm: false,
+    showNoteForm: false,
+    openNoteId: null,
+    editingAccount: null,
+    editingKey: false,
+    editingChatIndex: null,
+    showApArForm: false, apArKind: 'payable', apArAccount: 'cash',
+    settlingApArId: null, settleApArAccount: 'cash',
+    editingApArId: null, editApAr: null,
+    showMemberForm: false,
+    showBulkMemberForm: false,
+    showFeeEventForm: false, feeEventAccount: 'cash',
+    openFeeEventId: null,
+    addingParticipantsFor: null,
+    addingCustomNameFor: null,
+  },
+};
+
+function loadAll() {
+  state.transactions = loadJSON('etbs_transactions', []);
+  state.adjustments = loadJSON('etbs_adjustments', { carte_bancaire: 0, d17: 0, cash: 0 });
+  state.geminiKey = localStorage.getItem('etbs_gemini_key') || '';
+  let opp = loadJSON('etbs_opportunities', null);
+  if (opp === null) { opp = SEED_OPPORTUNITIES; saveJSON('etbs_opportunities', opp); }
+  state.opportunities = opp;
+  let nt = loadJSON('etbs_notes', null);
+  if (nt === null) { nt = SEED_NOTES; saveJSON('etbs_notes', nt); }
+  state.notes = nt;
+  state.payables = loadJSON('etbs_payables', []);
+  state.members = loadJSON('etbs_members', []);
+  state.feeEvents = loadJSON('etbs_fee_events', []);
+  state.feeParticipants = loadJSON('etbs_fee_participants', []);
+  state.loggedBy = localStorage.getItem('etbs_logged_by') || '';
+}
+
+function txDelta() {
+  const b = { carte_bancaire: 0, d17: 0, cash: 0 };
+  state.transactions.forEach(t => {
+    const amt = Number(t.amount) || 0;
+    if (t.type === 'transfer') {
+      b[t.fromAccount] = (b[t.fromAccount] || 0) - amt;
+      b[t.toAccount] = (b[t.toAccount] || 0) + amt;
+    } else {
+      b[t.account] = (b[t.account] || 0) + (t.type === 'income' ? amt : -amt);
+    }
+  });
+  return b;
+}
+function balances() {
+  const delta = txDelta();
+  const b = {};
+  ACCOUNTS.forEach(a => b[a.id] = (state.adjustments[a.id] || 0) + (delta[a.id] || 0));
+  return b;
+}
+
+// Balance per account using only transactions dated on/before cutoffISO (YYYY-MM-DD).
+// Adjustments aren't individually dated, so they're treated as always in effect —
+// a reasonable approximation given how account corrections are used in this app.
+function balancesAsOf(cutoffISO) {
+  const b = { carte_bancaire: 0, d17: 0, cash: 0 };
+  state.transactions.forEach(t => {
+    if (!t.date || t.date > cutoffISO) return;
+    const amt = Number(t.amount) || 0;
+    if (t.type === 'transfer') {
+      b[t.fromAccount] = (b[t.fromAccount] || 0) - amt;
+      b[t.toAccount] = (b[t.toAccount] || 0) + amt;
+    } else {
+      b[t.account] = (b[t.account] || 0) + (t.type === 'income' ? amt : -amt);
+    }
+  });
+  ACCOUNTS.forEach(a => b[a.id] = (state.adjustments[a.id] || 0) + (b[a.id] || 0));
+  return b;
+}
+
+function addDaysISO(iso, days) {
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function categoryTotals(type) {
+  const totals = {};
+  state.transactions.filter(t => t.type === type).forEach(t => {
+    totals[t.category] = (totals[t.category] || 0) + (Number(t.amount) || 0);
+  });
+  return Object.entries(totals).sort((a, b) => b[1] - a[1]);
+}
+
+function lastNMonths(n) {
+  const arr = [];
+  const now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    arr.push({ key: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), label: d.toLocaleDateString('en-GB', { month: 'short' }) });
+  }
+  return arr;
+}
+
+// Creates a real ledger transaction (so it shows up in Treasury/Dashboard like any other
+// entry) as the result of settling an AP/AR item or a member fee. Returns the new tx id.
+function createSettlementTransaction({ type, account, category, amount, note, date }) {
+  const entry = {
+    id: uid(), createdAt: Date.now(), type, account, category, amount,
+    date: date || todayISO(), time: nowHHMM(), note: note || '', loggedBy: state.loggedBy || '',
+  };
+  state.transactions.unshift(entry);
+  saveJSON('etbs_transactions', state.transactions);
+  syncPushInBackground();
+  return entry.id;
+}
+
+// ============== APP ACTIONS ==============
+const App = {
+  setTab(id) { state.activeTab = id; render(); },
+
+  toggleTxForm() { state.ui.showTxForm = !state.ui.showTxForm; render(); },
+  setTxType(t, btn) {
+    state.ui.txType = t;
+    if (btn) selectSegPill(btn, t === 'income' ? 'active-income' : (t === 'expense' ? 'active-expense' : 'active-transfer'));
+    const c = document.getElementById('tx-type-fields');
+    if (c) c.innerHTML = renderTxTypeFields();
+  },
+  setTxAccount(a, btn) { state.ui.txAccount = a; if (btn) selectPill(btn); },
+  setTxFromAccount(a, btn) { state.ui.txFromAccount = a; if (btn) selectPill(btn); },
+  setTxToAccount(a, btn) { state.ui.txToAccount = a; if (btn) selectPill(btn); },
+  submitTx(e) {
+    e.preventDefault();
+    const f = e.target;
+    const amt = parseFloat(f.amount.value);
+    if (!amt || amt <= 0) return;
+    const date = f.date.value || todayISO();
+    const time = (f.time && f.time.value) ? f.time.value : '';
+    const note = f.note.value.trim();
+    const loggedBy = f.loggedBy.value.trim();
+    let entry;
+    if (state.ui.txType === 'transfer') {
+      const from = state.ui.txFromAccount, to = state.ui.txToAccount;
+      if (from === to) { alert('Pick two different accounts to transfer between.'); return; }
+      entry = { id: uid(), createdAt: Date.now(), type: 'transfer', fromAccount: from, toAccount: to, amount: amt, date, time, note, loggedBy };
+    } else {
+      const category = f.category.value.trim();
+      if (!category) return;
+      entry = { id: uid(), createdAt: Date.now(), type: state.ui.txType, account: state.ui.txAccount, category, amount: amt, date, time, note, loggedBy };
+    }
+    state.transactions.unshift(entry);
+    saveJSON('etbs_transactions', state.transactions);
+    syncPushInBackground();
+    if (loggedBy) { state.loggedBy = loggedBy; localStorage.setItem('etbs_logged_by', loggedBy); }
+    state.ui.showTxForm = false;
+    render();
+  },
+  deleteTx(id) {
+    state.transactions = state.transactions.filter(t => t.id !== id);
+    saveJSON('etbs_transactions', state.transactions);
+    syncPushInBackground();
+    render();
+  },
+  startEditTx(id) {
+    const t = state.transactions.find(x => x.id === id);
+    if (!t) return;
+    state.ui.editingTxId = id;
+    state.ui.editTx = { ...t };
+    render();
+  },
+  cancelEditTx() { state.ui.editingTxId = null; state.ui.editTx = null; render(); },
+  setEditTxType(v, btn) {
+    state.ui.editTx.type = v;
+    if (btn) selectSegPill(btn, v === 'income' ? 'active-income' : (v === 'expense' ? 'active-expense' : 'active-transfer'));
+    const c = document.getElementById('edit-tx-type-fields');
+    if (c) c.innerHTML = renderEditTxTypeFields();
+  },
+  setEditTxAccount(v, btn) { state.ui.editTx.account = v; if (btn) selectPill(btn); },
+  setEditTxFrom(v, btn) { state.ui.editTx.fromAccount = v; if (btn) selectPill(btn); },
+  setEditTxTo(v, btn) { state.ui.editTx.toAccount = v; if (btn) selectPill(btn); },
+  submitEditTx(e, id) {
+    e.preventDefault();
+    const f = e.target;
+    const amt = parseFloat(f.amount.value);
+    if (!amt || amt <= 0) return;
+    const draft = state.ui.editTx;
+    const original = state.transactions.find(t => t.id === id);
+    if (!original) return;
+    const date = f.date.value || todayISO();
+    const time = (f.time && f.time.value) ? f.time.value : '';
+    const note = f.note.value.trim();
+    const loggedBy = f.loggedBy.value.trim();
+    let updated;
+    if (draft.type === 'transfer') {
+      if (draft.fromAccount === draft.toAccount) { alert('Pick two different accounts to transfer between.'); return; }
+      updated = { id, createdAt: original.createdAt, type: 'transfer', fromAccount: draft.fromAccount, toAccount: draft.toAccount, amount: amt, date, time, note, loggedBy };
+    } else {
+      const category = f.category.value.trim();
+      if (!category) return;
+      updated = { id, createdAt: original.createdAt, type: draft.type, account: draft.account, category, amount: amt, date, time, note, loggedBy };
+    }
+    state.transactions = state.transactions.map(t => t.id === id ? updated : t);
+    saveJSON('etbs_transactions', state.transactions);
+    syncPushInBackground();
+    state.ui.editingTxId = null;
+    state.ui.editTx = null;
+    render();
+  },
+  setFilterAccount(v) { state.ui.filterAccount = v; render(); },
+  setFilterType(v) { state.ui.filterType = v; render(); },
+  setSearch(el) {
+    const pos = el.selectionStart;
+    state.ui.search = el.value;
+    renderContentOnly();
+    const ne = document.getElementById('search-input');
+    if (ne) { ne.focus(); ne.setSelectionRange(pos, pos); }
+  },
+
+  startEditAccount(id) { state.ui.editingAccount = id; render(); },
+  cancelEditAccount() { state.ui.editingAccount = null; render(); },
+  submitAccountEdit(e, id) {
+    e.preventDefault();
+    const val = parseFloat(e.target.value.value);
+    if (!isNaN(val)) {
+      const delta = txDelta();
+      state.adjustments[id] = val - (delta[id] || 0);
+      saveJSON('etbs_adjustments', state.adjustments);
+      syncPushInBackground();
+    }
+    state.ui.editingAccount = null;
+    render();
+  },
+
+  toggleOppForm() { state.ui.showOppForm = !state.ui.showOppForm; render(); },
+  submitOpp(e) {
+    e.preventDefault();
+    const f = e.target;
+    const name = f.name.value.trim();
+    if (!name) return;
+    state.opportunities.unshift({
+      id: uid(), name, type: f.type.value, deadline: f.deadline.value,
+      status: f.status.value, link: f.link.value.trim(), notes: f.notes.value.trim(),
+    });
+    saveJSON('etbs_opportunities', state.opportunities);
+    syncPushInBackground();
+    state.ui.showOppForm = false;
+    render();
+  },
+  setOppStatus(id, status) {
+    state.opportunities = state.opportunities.map(o => o.id === id ? { ...o, status } : o);
+    saveJSON('etbs_opportunities', state.opportunities);
+    syncPushInBackground();
+    render();
+  },
+  deleteOpp(id) {
+    state.opportunities = state.opportunities.filter(o => o.id !== id);
+    saveJSON('etbs_opportunities', state.opportunities);
+    syncPushInBackground();
+    render();
+  },
+
+  toggleNoteForm() { state.ui.showNoteForm = !state.ui.showNoteForm; render(); },
+  submitNote(e) {
+    e.preventDefault();
+    const f = e.target;
+    const title = f.title.value.trim();
+    const content = f.content.value.trim();
+    if (!title || !content) return;
+    state.notes.unshift({ id: uid(), title, content, date: todayISO() });
+    saveJSON('etbs_notes', state.notes);
+    syncPushInBackground();
+    state.ui.showNoteForm = false;
+    render();
+  },
+  toggleNote(id) { state.ui.openNoteId = state.ui.openNoteId === id ? null : id; render(); },
+  deleteNote(id) {
+    state.notes = state.notes.filter(n => n.id !== id);
+    saveJSON('etbs_notes', state.notes);
+    syncPushInBackground();
+    render();
+  },
+
+  // ---- Accounts payable / receivable ----
+  toggleApArForm() { state.ui.showApArForm = !state.ui.showApArForm; render(); },
+  setApArKind(k, btn) { state.ui.apArKind = k; if (btn) selectSegPill(btn, k === 'payable' ? 'active-expense' : 'active-income'); },
+  setApArAccount(id, btn) { state.ui.apArAccount = id; if (btn) selectPill(btn); },
+  submitApAr(e) {
+    e.preventDefault();
+    const f = e.target;
+    const amt = parseFloat(f.amount.value);
+    const description = f.description.value.trim();
+    if (!amt || amt <= 0 || !description) return;
+    state.payables.unshift({
+      id: uid(), kind: state.ui.apArKind, description,
+      counterparty: f.counterparty.value.trim(),
+      amount: amt, dueDate: f.dueDate.value,
+      account: state.ui.apArAccount,
+      status: 'pending', createdAt: Date.now(),
+    });
+    saveJSON('etbs_payables', state.payables);
+    syncPushInBackground();
+    state.ui.showApArForm = false;
+    render();
+  },
+  deleteApAr(id) {
+    state.payables = state.payables.filter(p => p.id !== id);
+    saveJSON('etbs_payables', state.payables);
+    syncPushInBackground();
+    render();
+  },
+  startEditApAr(id) {
+    const p = state.payables.find(x => x.id === id);
+    if (!p || p.status !== 'pending') return;
+    state.ui.editingApArId = id;
+    state.ui.editApAr = { ...p };
+    state.ui.settlingApArId = null;
+    render();
+  },
+  cancelEditApAr() { state.ui.editingApArId = null; state.ui.editApAr = null; render(); },
+  setEditApArKind(k, btn) { state.ui.editApAr.kind = k; if (btn) selectSegPill(btn, k === 'payable' ? 'active-expense' : 'active-income'); },
+  setEditApArAccount(id, btn) { state.ui.editApAr.account = id; if (btn) selectPill(btn); },
+  submitEditApAr(e, id) {
+    e.preventDefault();
+    const f = e.target;
+    const amt = parseFloat(f.amount.value);
+    const description = f.description.value.trim();
+    if (!amt || amt <= 0 || !description) return;
+    const draft = state.ui.editApAr;
+    state.payables = state.payables.map(p => p.id === id ? {
+      ...p, kind: draft.kind, description, counterparty: f.counterparty.value.trim(),
+      amount: amt, dueDate: f.dueDate.value, account: draft.account,
+    } : p);
+    saveJSON('etbs_payables', state.payables);
+    syncPushInBackground();
+    state.ui.editingApArId = null;
+    state.ui.editApAr = null;
+    render();
+  },
+  toggleSettleApAr(id) {
+    if (state.ui.settlingApArId === id) { state.ui.settlingApArId = null; render(); return; }
+    const item = state.payables.find(p => p.id === id);
+    state.ui.settlingApArId = id;
+    state.ui.settleApArAccount = item ? item.account : 'cash';
+    state.ui.editingApArId = null;
+    render();
+  },
+  setSettleApArAccount(id, btn) { state.ui.settleApArAccount = id; if (btn) selectPill(btn); },
+  confirmSettleApAr(e, id) {
+    e.preventDefault();
+    const item = state.payables.find(p => p.id === id);
+    if (!item) return;
+    const f = e.target;
+    const account = state.ui.settleApArAccount;
+    const date = f.date.value || todayISO();
+    const txType = item.kind === 'payable' ? 'expense' : 'income';
+    const category = item.kind === 'payable' ? 'Accounts payable' : 'Accounts receivable';
+    const txId = createSettlementTransaction({
+      type: txType, account, category, amount: item.amount,
+      note: item.description + (item.counterparty ? ' — ' + item.counterparty : ''),
+      date,
+    });
+    state.payables = state.payables.map(p => p.id === id ? { ...p, status: 'settled', settledDate: date, account, txId } : p);
+    saveJSON('etbs_payables', state.payables);
+    syncPushInBackground();
+    state.ui.settlingApArId = null;
+    render();
+  },
+
+  // ---- Members & fee events ----
+  toggleMemberForm() { state.ui.showMemberForm = !state.ui.showMemberForm; render(); },
+  submitMember(e) {
+    e.preventDefault();
+    const name = e.target.name.value.trim();
+    if (!name) return;
+    state.members.unshift({ id: uid(), name });
+    saveJSON('etbs_members', state.members);
+    syncPushInBackground();
+    state.ui.showMemberForm = false;
+    render();
+  },
+  toggleBulkMemberForm() { state.ui.showBulkMemberForm = !state.ui.showBulkMemberForm; render(); },
+  submitBulkMembers(e) {
+    e.preventDefault();
+    const raw = e.target.names.value;
+    // One name per line is the main format; a comma within a line also splits, in case
+    // someone pastes a horizontal list instead of a vertical one.
+    const candidates = raw.split(/\r?\n/).flatMap(line => line.split(',')).map(s => s.trim()).filter(Boolean);
+    const existingLower = new Set(state.members.map(m => m.name.trim().toLowerCase()));
+    const seenThisBatch = new Set();
+    let added = 0, skipped = 0;
+    candidates.forEach(name => {
+      const key = name.toLowerCase();
+      if (existingLower.has(key) || seenThisBatch.has(key)) { skipped++; return; }
+      state.members.unshift({ id: uid(), name });
+      seenThisBatch.add(key);
+      added++;
+    });
+    if (added > 0) {
+      saveJSON('etbs_members', state.members);
+      syncPushInBackground();
+    }
+    state.ui.showBulkMemberForm = false;
+    render();
+    if (added || skipped) {
+      alert(`Added ${added} member${added === 1 ? '' : 's'}.` + (skipped ? ` Skipped ${skipped} already in the roster or repeated in the list.` : ''));
+    }
+  },
+  deleteMember(id) {
+    if (!confirm('Remove this member? Their entries in fee events go too — transactions already recorded stay in the ledger.')) return;
+    state.members = state.members.filter(m => m.id !== id);
+    state.feeParticipants = state.feeParticipants.filter(p => p.memberId !== id);
+    saveJSON('etbs_members', state.members);
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    render();
+  },
+
+  toggleFeeEventForm() { state.ui.showFeeEventForm = !state.ui.showFeeEventForm; render(); },
+  setFeeEventAccount(id, btn) { state.ui.feeEventAccount = id; if (btn) selectPill(btn); },
+  submitFeeEvent(e) {
+    e.preventDefault();
+    const f = e.target;
+    const name = f.name.value.trim();
+    const amt = parseFloat(f.amount.value);
+    if (!name || !amt || amt <= 0) return;
+    const ev = { id: uid(), name, amount: amt, account: state.ui.feeEventAccount, createdAt: Date.now() };
+    state.feeEvents.unshift(ev);
+    saveJSON('etbs_fee_events', state.feeEvents);
+    syncPushInBackground();
+    state.ui.showFeeEventForm = false;
+    state.ui.openFeeEventId = ev.id;
+    render();
+  },
+  deleteFeeEvent(id) {
+    if (!confirm('Delete this fee event and its participant list? Transactions already recorded stay in the ledger.')) return;
+    state.feeEvents = state.feeEvents.filter(x => x.id !== id);
+    state.feeParticipants = state.feeParticipants.filter(p => p.eventId !== id);
+    saveJSON('etbs_fee_events', state.feeEvents);
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    render();
+  },
+  toggleFeeEventOpen(id) { state.ui.openFeeEventId = state.ui.openFeeEventId === id ? null : id; render(); },
+
+  toggleAddParticipants(eventId) { state.ui.addingParticipantsFor = state.ui.addingParticipantsFor === eventId ? null : eventId; render(); },
+  // Ticking a roster checkbox adds them to this event; unticking removes them — but only
+  // while unpaid, so a stray click can't quietly undo a real payment.
+  toggleParticipantFromRoster(eventId, memberId, checked) {
+    const existing = state.feeParticipants.find(p => p.eventId === eventId && p.memberId === memberId);
+    if (checked) {
+      if (existing) return;
+      const ev = state.feeEvents.find(x => x.id === eventId);
+      if (!ev) return;
+      state.feeParticipants.push({ id: uid(), eventId, memberId, customName: null, amount: ev.amount, status: 'unpaid' });
+    } else {
+      if (!existing || existing.status === 'paid') { render(); return; }
+      state.feeParticipants = state.feeParticipants.filter(p => p.id !== existing.id);
+    }
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    render();
+  },
+  toggleAddCustomName(eventId) { state.ui.addingCustomNameFor = state.ui.addingCustomNameFor === eventId ? null : eventId; render(); },
+  submitCustomParticipant(e, eventId) {
+    e.preventDefault();
+    const name = e.target.customName.value.trim();
+    if (!name) return;
+    const ev = state.feeEvents.find(x => x.id === eventId);
+    if (!ev) return;
+    state.feeParticipants.push({ id: uid(), eventId, memberId: null, customName: name, amount: ev.amount, status: 'unpaid' });
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    state.ui.addingCustomNameFor = null;
+    render();
+  },
+  removeParticipant(id) {
+    const p = state.feeParticipants.find(x => x.id === id);
+    if (!p) return;
+    if (p.status === 'paid') {
+      if (!confirm('This person already paid — removing them also deletes that transaction and takes the money back out. Continue?')) return;
+      if (p.txId) { state.transactions = state.transactions.filter(t => t.id !== p.txId); saveJSON('etbs_transactions', state.transactions); }
+    }
+    state.feeParticipants = state.feeParticipants.filter(x => x.id !== id);
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    render();
+  },
+  setParticipantAmount(id, val) {
+    const amt = parseFloat(val);
+    if (isNaN(amt) || amt < 0) return;
+    state.feeParticipants = state.feeParticipants.map(p => p.id === id ? { ...p, amount: amt } : p);
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+  },
+  // One tap: unpaid -> paid records a real transaction; paid -> unpaid deletes that
+  // transaction again, taking the money back out of the account it went into.
+  togglePaid(participantId) {
+    const p = state.feeParticipants.find(x => x.id === participantId);
+    if (!p) return;
+    const ev = state.feeEvents.find(x => x.id === p.eventId);
+    if (!ev) return;
+    if (p.status === 'paid') {
+      if (p.txId) { state.transactions = state.transactions.filter(t => t.id !== p.txId); saveJSON('etbs_transactions', state.transactions); }
+      state.feeParticipants = state.feeParticipants.map(x => x.id === participantId ? { ...x, status: 'unpaid', paidDate: null, txId: null } : x);
+    } else {
+      const name = p.memberId ? ((state.members.find(m => m.id === p.memberId) || {}).name || 'Member') : (p.customName || 'Guest');
+      const date = todayISO();
+      const txId = createSettlementTransaction({
+        type: 'income', account: ev.account, category: 'Membership fees', amount: p.amount,
+        note: name + ' — ' + ev.name,
+        date,
+      });
+      state.feeParticipants = state.feeParticipants.map(x => x.id === participantId ? { ...x, status: 'paid', paidDate: date, txId } : x);
+    }
+    saveJSON('etbs_fee_participants', state.feeParticipants);
+    syncPushInBackground();
+    render();
+  },
+
+  async exportData() {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      transactions: state.transactions,
+      adjustments: state.adjustments,
+      opportunities: state.opportunities,
+      notes: state.notes,
+      payables: state.payables,
+      members: state.members,
+      feeEvents: state.feeEvents,
+      feeParticipants: state.feeParticipants,
+    };
+    let fileObj, filenameSuffix = '';
+    if (CRYPTO_OK) {
+      const pin = await askPin({ title: 'Protect this backup', subtitle: "Choose a numeric password for this file. Give it to whoever imports it — send it a different way than the file itself, e.g. by text.", confirmLabel: 'Encrypt & download' });
+      if (pin === null) return;
+      const enc = await encryptWithPin(pin, JSON.stringify(payload));
+      fileObj = { etbsBackup: true, version: 1, ...enc };
+    } else {
+      fileObj = payload;
+      filenameSuffix = '-unencrypted';
+      alert("This browser context can't encrypt the backup, so it will download as plain (unprotected) JSON instead.");
+    }
+    const blob = new Blob([JSON.stringify(fileObj)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enactus-tbs-treasury-backup-${todayISO()}${filenameSuffix}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+  importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      let fileObj;
+      try { fileObj = JSON.parse(reader.result); }
+      catch (err) { alert('Could not read that file — is it a valid backup export?'); e.target.value = ''; return; }
+
+      let data;
+      if (fileObj && fileObj.etbsBackup) {
+        if (!CRYPTO_OK) { alert("This backup is encrypted, but this browser context can't decrypt it. Try opening the app directly in Chrome or Safari."); e.target.value = ''; return; }
+        const pin = await askPin({ title: 'Enter the backup password', subtitle: 'Ask whoever sent you this file for the number.', confirmLabel: 'Unlock & import' });
+        if (pin === null) { e.target.value = ''; return; }
+        try {
+          data = JSON.parse(await decryptWithPin(pin, fileObj));
+        } catch (err) {
+          alert('Wrong password, or the file is damaged. Nothing on this device was changed.');
+          e.target.value = ''; return;
+        }
+      } else if (fileObj && (Array.isArray(fileObj.transactions) || fileObj.adjustments)) {
+        data = fileObj; // older, unencrypted backup — still supported
+      } else {
+        alert("This doesn't look like a treasury backup file.");
+        e.target.value = ''; return;
+      }
+
+      if (!confirm('This will replace the data currently on this device with the imported backup. Continue?')) { e.target.value = ''; return; }
+      if (Array.isArray(data.transactions)) { state.transactions = data.transactions; saveJSON('etbs_transactions', state.transactions); }
+      if (data.adjustments) { state.adjustments = data.adjustments; saveJSON('etbs_adjustments', state.adjustments); }
+      if (Array.isArray(data.opportunities)) { state.opportunities = data.opportunities; saveJSON('etbs_opportunities', state.opportunities); }
+      if (Array.isArray(data.notes)) { state.notes = data.notes; saveJSON('etbs_notes', state.notes); }
+      if (Array.isArray(data.payables)) { state.payables = data.payables; saveJSON('etbs_payables', state.payables); }
+      if (Array.isArray(data.members)) { state.members = data.members; saveJSON('etbs_members', state.members); }
+      if (Array.isArray(data.feeEvents)) { state.feeEvents = data.feeEvents; saveJSON('etbs_fee_events', state.feeEvents); }
+      if (Array.isArray(data.feeParticipants)) { state.feeParticipants = data.feeParticipants; saveJSON('etbs_fee_participants', state.feeParticipants); }
+      syncPushInBackground();
+      render();
+      alert('Import complete.');
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  },
+
+  resetAll() {
+    const syncNote = syncReady() ? ' This device is connected to cloud sync — resetting here will NOT touch the shared Google Sheet, and the next sync will pull the sheet\'s data back down.' : '';
+    if (!confirm('This clears all balances, transactions, opportunities and notes stored on THIS device. Export a backup first if you want to keep a copy.' + syncNote + ' Continue?')) return;
+    ['etbs_transactions','etbs_adjustments','etbs_opportunities','etbs_notes','etbs_payables','etbs_members','etbs_fee_events','etbs_fee_participants','etbs_logged_by'].forEach(k => localStorage.removeItem(k));
+    loadAll();
+    render();
+  },
+
+  toggleKeyEdit() { state.ui.editingKey = !state.ui.editingKey; render(); },
+  saveGeminiKey(e) {
+    e.preventDefault();
+    const key = e.target.geminiKey.value.trim();
+    if (!key) return;
+    state.geminiKey = key;
+    localStorage.setItem('etbs_gemini_key', key);
+    state.ui.editingKey = false;
+    render();
+  },
+  clearGeminiKey() {
+    if (!confirm('Remove the saved Gemini key from this device?')) return;
+    state.geminiKey = '';
+    localStorage.removeItem('etbs_gemini_key');
+    render();
+  },
+
+  startEditChatMsg(idx) { state.ui.editingChatIndex = idx; render(); },
+  cancelEditChatMsg() { state.ui.editingChatIndex = null; render(); },
+  submitEditChatMsg(e, idx) {
+    e.preventDefault();
+    const newText = e.target.msg.value.trim();
+    if (!newText) return;
+    // Drop this message and everything that came after it — the reply and any
+    // follow-ups were based on the old wording, so they no longer apply.
+    state.chatMessages = state.chatMessages.slice(0, idx);
+    state.ui.editingChatIndex = null;
+    App.sendChat(newText);
+  },
+
+  async sendChat(text) {
+    const msg = (text || '').trim();
+    if (!msg || state.chatLoading || !state.geminiKey) return;
+    state.chatMessages.push({ role: 'user', content: msg });
+    state.chatLoading = true;
+    render();
+
+    try {
+      const b = balances();
+      const total = b.carte_bancaire + b.d17 + b.cash;
+      const accLines = ACCOUNTS.map(a => `- ${a.label}: ${fmtDT(b[a.id]||0)}`).join('\n');
+      const recent = state.transactions.slice(0,12).map(t => {
+        if (t.type === 'transfer') return `${t.date} | transfer | ${t.fromAccount} -> ${t.toAccount} | ${fmtDT(t.amount)}`;
+        return `${t.date} | ${t.type} | ${t.account} | ${t.category} | ${fmtDT(t.amount)}${t.note ? ' | '+t.note : ''}`;
+      }).join('\n') || '(none logged yet)';
+      const opps = state.opportunities.map(o => `${o.name} — ${o.type} — status: ${o.status}${o.deadline ? ' — deadline '+o.deadline : ''}${o.notes ? ' — '+o.notes : ''}`).join('\n') || '(none logged yet)';
+      const noteLines = state.notes.map(n => `${n.title}: ${n.content}`).join('\n') || '(none)';
+
+      const systemPrompt = `You are the treasury assistant built into Enactus TBS's internal treasury app — a knowledgeable, finance-literate advisor for the Financial Officer (FO) and future FOs. Enactus is a global non-profit network where university students run entrepreneurial projects with social and environmental impact; Enactus TBS is the chapter at Tunis Business School in Tunisia. You help with the club's finances, funding opportunities, budgeting, sponsorship strategy, and handover knowledge.
+
+Be genuinely helpful and substantive: reason things through, explain your thinking, offer concrete suggestions and next steps, and bring in relevant financial/non-profit knowledge the user may not have. When a question is open-ended (e.g. "what funding could we pursue?"), give a thoughtful, structured answer rather than a one-liner. When it's a simple data lookup (e.g. "what's our D17 balance?"), answer directly and briefly.
+
+Known organizational constraints, always keep these in mind:
+- Enactus TBS has no legal personality, so the club cannot hold funds or sign contracts as itself.
+- Grants legally belong to the project holder who won them, not to the club.
+- Enactus Tunisia takes a 10% fee on flows that go through the bank — factor this into any projection of what a grant or sponsorship actually nets.
+
+Current data snapshot from the app:
+TOTAL BALANCE: ${fmtDT(total)}
+BY ACCOUNT:
+${accLines}
+
+RECENT TRANSACTIONS (most recent first):
+${recent}
+
+FINANCIAL OPPORTUNITIES:
+${opps}
+
+HANDOVER NOTES:
+${noteLines}
+
+For any specific figures, trust the data above — it's computed from the real ledger. Reply in the same language the user writes in (they may use English, French, or Arabic). You may use **bold** and simple "- " bullet lists for clarity; the app renders them. If something genuinely isn't in the data, say so rather than inventing it.`;
+
+      const contents = state.chatMessages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+      const reqBody = JSON.stringify({ systemInstruction: { parts: [{ text: systemPrompt }] }, contents });
+
+      // Try stronger models first for smarter answers, falling back to faster ones if a
+      // model is retired or unavailable. Remembers whichever works.
+      const MODEL_CANDIDATES = ['gemini-3.6-pro', 'gemini-pro-latest', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
+      const savedModel = localStorage.getItem('etbs_gemini_model');
+      const modelsToTry = (savedModel && MODEL_CANDIDATES.includes(savedModel)) ? [savedModel, ...MODEL_CANDIDATES.filter(m => m !== savedModel)] : MODEL_CANDIDATES;
+
+      let data = null, lastErr = null;
+      for (const model of modelsToTry) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 40000);
+        let res;
+        try {
+          res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(state.geminiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: reqBody,
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+        const json = await res.json();
+        if (json.error) {
+          const m = (json.error.message || '').toLowerCase();
+          // model-not-available style errors → try the next candidate
+          if (m.includes('no longer available') || m.includes('not found') || m.includes('is not supported') || json.error.code === 404) {
+            lastErr = new Error(json.error.message);
+            continue;
+          }
+          // any other error (quota, bad key, etc.) is real — stop and report it
+          throw new Error(json.error.message || 'Gemini API error');
+        }
+        localStorage.setItem('etbs_gemini_model', model);
+        data = json;
+        break;
+      }
+      if (!data) throw (lastErr || new Error('No available Gemini model responded.'));
+
+      const replyText = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || [])
+        .map(p => p.text).join('') || "I couldn't generate a response — try rephrasing.";
+      state.chatMessages.push({ role: 'assistant', content: replyText });
+    } catch (err) {
+      console.error('sendChat failed', err);
+      const errMsg = (err && err.name === 'AbortError') ? 'the response took too long (over 40 seconds) — Gemini can be slow on the free tier, try asking again' : ((err && err.message) || 'unknown error');
+      state.chatMessages.push({ role: 'assistant', content: `Couldn't reach Gemini: ${errMsg}. Check your key, your connection, or try again in a bit (free tier has a request limit).` });
+    } finally {
+      state.chatLoading = false;
+      render();
+    }
+  },
+};
+
+// ============== RENDER ==============
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = TABS.map(t =>
+    `<button class="tab ${state.activeTab === t.id ? 'active' : ''}" onclick="App.setTab('${t.id}')">${t.label}</button>`
+  ).join('');
+}
+
+function renderDashboard() {
+  const b = balances();
+  const total = b.carte_bancaire + b.d17 + b.cash;
+  const thisMonthKey = todayISO().slice(0, 7);
+  const thisMonthTx = state.transactions.filter(t => t.date && t.date.slice(0, 7) === thisMonthKey);
+  const monthIn = thisMonthTx.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const monthOut = thisMonthTx.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const netMonth = monthIn - monthOut;
+
+  const months = lastNMonths(6);
+  const monthly = months.map(m => {
+    const txs = state.transactions.filter(t => t.date && t.date.slice(0, 7) === m.key);
+    return {
+      label: m.label,
+      income: txs.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0),
+      expense: txs.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0),
+    };
+  });
+  const maxMonthly = Math.max(1, ...monthly.flatMap(m => [m.income, m.expense]));
+
+  const expByCat = categoryTotals('expense').slice(0, 6);
+  const incByCat = categoryTotals('income').slice(0, 6);
+  const maxExp = Math.max(1, ...expByCat.map(([, v]) => v));
+  const maxInc = Math.max(1, ...incByCat.map(([, v]) => v));
+
+  function catBars(entries, max, color, emptyMsg) {
+    if (entries.length === 0) return `<div class="empty">${emptyMsg}</div>`;
+    return entries.map(([cat, amt]) => `
+      <div class="catbar-row">
+        <div class="catbar-label">${esc(cat)}</div>
+        <div class="catbar-track"><div class="catbar-fill" style="width:${(amt/max)*100}%;background:${color};"></div></div>
+        <div class="catbar-amt mono">${fmtDT(amt)}</div>
+      </div>`).join('');
+  }
+
+  return `
+    <div class="stat-grid">
+      <div class="card stat-card"><div class="stat-label">TOTAL TREASURY</div><div class="stat-value mono">${fmtDT(total)}</div></div>
+      <div class="card stat-card"><div class="stat-label">THIS MONTH IN</div><div class="stat-value mono" style="color:var(--green)">${fmtDT(monthIn)}</div></div>
+      <div class="card stat-card"><div class="stat-label">THIS MONTH OUT</div><div class="stat-value mono" style="color:var(--red)">${fmtDT(monthOut)}</div></div>
+      <div class="card stat-card"><div class="stat-label">NET THIS MONTH</div><div class="stat-value mono" style="color:${netMonth>=0?'var(--green)':'var(--red)'}">${fmtDT(netMonth)}</div></div>
+    </div>
+
+    <div class="section-title">Income vs expense — last 6 months</div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="bar-chart">
+        ${monthly.map(m => `
+          <div class="bar-chart-col">
+            <div class="bar-chart-bars">
+              <div class="bar-chart-bar" style="height:${Math.max(2,(m.income/maxMonthly)*100)}%;background:var(--green);" title="Income ${fmtDT(m.income)}"></div>
+              <div class="bar-chart-bar" style="height:${Math.max(2,(m.expense/maxMonthly)*100)}%;background:var(--red);" title="Expense ${fmtDT(m.expense)}"></div>
+            </div>
+            <div class="bar-chart-label">${m.label}</div>
+          </div>`).join('')}
+      </div>
+      <div class="chart-legend"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--red)"></i>Expense</span></div>
+    </div>
+
+    <div class="section-title">Expenses by category</div>
+    <div class="card" style="margin-bottom:18px;">${catBars(expByCat, maxExp, 'var(--red)', 'No expenses logged yet.')}</div>
+
+    <div class="section-title">Income by category</div>
+    <div class="card" style="margin-bottom:18px;">${catBars(incByCat, maxInc, 'var(--green)', 'No income logged yet.')}</div>
+
+    <div class="section-title">Accounts</div>
+    <div class="card">
+      ${ACCOUNTS.map(a => {
+        const val = b[a.id] || 0;
+        const pct = total !== 0 ? Math.max(0, (val/total)*100) : 0;
+        return `
+        <div class="catbar-row">
+          <div class="catbar-label">${a.label}</div>
+          <div class="catbar-track"><div class="catbar-fill" style="width:${pct}%;background:${a.color};"></div></div>
+          <div class="catbar-amt mono">${fmtDT(val)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderTxTypeFields() {
+  if (state.ui.txType === 'transfer') {
+    return `
+      <div class="field-label">FROM</div>
+      <div class="acct-pick">
+        ${ACCOUNTS.map(a => `<button type="button" class="${state.ui.txFromAccount===a.id?'active':''}" onclick="App.setTxFromAccount('${a.id}', this)">${a.label}</button>`).join('')}
+      </div>
+      <div class="field-label">TO</div>
+      <div class="acct-pick">
+        ${ACCOUNTS.map(a => `<button type="button" class="${state.ui.txToAccount===a.id?'active':''}" onclick="App.setTxToAccount('${a.id}', this)">${a.label}</button>`).join('')}
+      </div>
+      <div class="muted" style="font-size:11.5px;margin:-2px 2px 12px;">Moves money between your own accounts — doesn't change the total treasury.</div>
+    `;
+  }
+  return `
+    <div class="acct-pick">
+      ${ACCOUNTS.map(a => `<button type="button" class="${state.ui.txAccount===a.id?'active':''}" onclick="App.setTxAccount('${a.id}', this)">${a.label}</button>`).join('')}
+    </div>
+    <div class="row">
+      <input name="category" list="cat-list" placeholder="Category (e.g. ${state.ui.txType==='income'?'Sponsorship':'Transport'})">
+      <datalist id="cat-list">${(state.ui.txType==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${c}">`).join('')}</datalist>
+    </div>
+  `;
+}
+
+function renderEditTxTypeFields() {
+  const d = state.ui.editTx;
+  if (!d) return '';
+  if (d.type === 'transfer') {
+    return `
+      <div class="field-label">FROM</div>
+      <div class="acct-pick">
+        ${ACCOUNTS.map(a => `<button type="button" class="${d.fromAccount===a.id?'active':''}" onclick="App.setEditTxFrom('${a.id}', this)">${a.label}</button>`).join('')}
+      </div>
+      <div class="field-label">TO</div>
+      <div class="acct-pick">
+        ${ACCOUNTS.map(a => `<button type="button" class="${d.toAccount===a.id?'active':''}" onclick="App.setEditTxTo('${a.id}', this)">${a.label}</button>`).join('')}
+      </div>
+    `;
+  }
+  return `
+    <div class="acct-pick">
+      ${ACCOUNTS.map(a => `<button type="button" class="${d.account===a.id?'active':''}" onclick="App.setEditTxAccount('${a.id}', this)">${a.label}</button>`).join('')}
+    </div>
+    <div class="row">
+      <input name="category" list="cat-list-edit" value="${esc(d.category||'')}" placeholder="Category">
+      <datalist id="cat-list-edit">${(d.type==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES).map(c=>`<option value="${c}">`).join('')}</datalist>
+    </div>
+  `;
+}
+
+function renderTxEditForm(id) {
+  const d = state.ui.editTx;
+  return `
+    <div class="tx-edit-form">
+      <div class="seg" style="margin-bottom:10px;">
+        <button type="button" class="${d.type==='expense'?'active-expense':''}" onclick="App.setEditTxType('expense', this)">Expense</button>
+        <button type="button" class="${d.type==='income'?'active-income':''}" onclick="App.setEditTxType('income', this)">Income</button>
+        <button type="button" class="${d.type==='transfer'?'active-transfer':''}" onclick="App.setEditTxType('transfer', this)">Transfer</button>
+      </div>
+      <form onsubmit="App.submitEditTx(event,'${id}')">
+        <div id="edit-tx-type-fields">${renderEditTxTypeFields()}</div>
+        <div class="row">
+          <input name="amount" type="number" step="0.001" min="0" value="${d.amount}">
+          <input name="date" type="date" value="${d.date||todayISO()}">
+          <input name="time" type="time" value="${d.time||''}">
+        </div>
+        <div class="row"><textarea name="note" rows="2" placeholder="Note (optional)">${esc(d.note||'')}</textarea></div>
+        <div class="row"><input name="loggedBy" value="${esc(d.loggedBy||'')}" placeholder="Logged by"></div>
+        <div style="display:flex;gap:8px;">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn" onclick="App.cancelEditTx()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+}
+
+function renderTreasury() {
+  const b = balances();
+  const total = b.carte_bancaire + b.d17 + b.cash;
+  const maxBal = Math.max(1, ...ACCOUNTS.map(a => Math.abs(b[a.id] || 0)));
+
+  const accountCards = ACCOUNTS.map(a => {
+    const val = b[a.id] || 0;
+    const pct = Math.min(100, (Math.abs(val) / maxBal) * 100);
+    const editing = state.ui.editingAccount === a.id;
+    return `
+      <div class="acct-card">
+        <div class="acct-top">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="acct-avatar" style="background:${a.color}">${a.short}</div>
+            <div class="acct-name">${a.label}</div>
+          </div>
+          ${!editing ? `<button class="icon-btn" title="Correct balance" onclick="App.startEditAccount('${a.id}')">${svg('pencil',13)}</button>` : ''}
+        </div>
+        ${editing ? `
+          <form class="row" style="margin-bottom:8px;" onsubmit="App.submitAccountEdit(event,'${a.id}')">
+            <input name="value" type="number" step="0.001" autofocus value="${val.toFixed(3)}" style="font-weight:700;">
+            <button type="submit" class="btn btn-primary" style="flex:0 0 auto;padding:9px 12px;">Set</button>
+            <button type="button" class="btn" style="flex:0 0 auto;padding:9px 10px;" onclick="App.cancelEditAccount()">${svg('x',13)}</button>
+          </form>
+        ` : `<div class="acct-value mono">${fmtDT(val)}</div>`}
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${a.color}"></div></div>
+      </div>`;
+  }).join('');
+
+  const filtered = state.transactions.filter(t => {
+    if (state.ui.filterAccount !== 'all') {
+      if (t.type === 'transfer') {
+        if (t.fromAccount !== state.ui.filterAccount && t.toAccount !== state.ui.filterAccount) return false;
+      } else if (t.account !== state.ui.filterAccount) return false;
+    }
+    if (state.ui.filterType !== 'all' && t.type !== state.ui.filterType) return false;
+    if (state.ui.search) {
+      const hay = t.type === 'transfer'
+        ? `transfer ${ACCOUNTS.find(a=>a.id===t.fromAccount)?.label||''} ${ACCOUNTS.find(a=>a.id===t.toAccount)?.label||''} ${t.note||''}`
+        : `${t.category||''} ${t.note||''}`;
+      if (!hay.toLowerCase().includes(state.ui.search.toLowerCase())) return false;
+    }
+    return true;
+  });
+
+  const txRows = filtered.length === 0
+    ? `<div class="empty">No entries yet. Add the first income, expense or transfer above.</div>`
+    : filtered.map(t => {
+        if (state.ui.editingTxId === t.id) {
+          return `<div class="tx-row" style="display:block;">${renderTxEditForm(t.id)}</div>`;
+        }
+        if (t.type === 'transfer') {
+          const fromAcc = ACCOUNTS.find(a => a.id === t.fromAccount);
+          const toAcc = ACCOUNTS.find(a => a.id === t.toAccount);
+          const metaBits = [t.loggedBy, t.note].filter(Boolean).join(' · ');
+          return `
+          <div class="tx-row">
+            ${txDateCell(t)}
+            <div class="tx-main">
+              <div class="tx-cat">${fromAcc ? fromAcc.label : t.fromAccount} → ${toAcc ? toAcc.label : t.toAccount}</div>
+              <div class="tx-meta">${esc(metaBits)}</div>
+            </div>
+            <div class="tx-amt mono" style="color:var(--blue)">
+              ${svg('swap', 12)}${fmtDT(t.amount)}
+            </div>
+            <button class="icon-btn" onclick="App.startEditTx('${t.id}')">${svg('pencil',13)}</button>
+            <button class="icon-btn" onclick="App.deleteTx('${t.id}')">${svg('trash',13)}</button>
+          </div>`;
+        }
+        const acc = ACCOUNTS.find(a => a.id === t.account);
+        const metaBits = [acc ? acc.label : t.account, t.loggedBy, t.note].filter(Boolean).join(' · ');
+        return `
+        <div class="tx-row">
+          ${txDateCell(t)}
+          <div class="tx-main">
+            <div class="tx-cat">${esc(t.category)}</div>
+            <div class="tx-meta">${esc(metaBits)}</div>
+          </div>
+          <div class="tx-amt mono" style="color:${t.type==='income' ? 'var(--green)' : 'var(--red)'}">
+            ${svg(t.type==='income' ? 'up' : 'down', 12)}${t.type==='income' ? '+' : '-'}${fmtDT(t.amount)}
+          </div>
+          <button class="icon-btn" onclick="App.startEditTx('${t.id}')">${svg('pencil',13)}</button>
+          <button class="icon-btn" onclick="App.deleteTx('${t.id}')">${svg('trash',13)}</button>
+        </div>`;
+      }).join('');
+
+  return `
+    <div class="hero-card">
+      <div class="hero-label">TOTAL TREASURY</div>
+      <div class="hero-value mono">${fmtDT(total)}</div>
+    </div>
+    <div class="acct-grid">${accountCards}</div>
+
+    <button class="btn ${state.ui.showTxForm ? 'btn-primary' : ''}" onclick="App.toggleTxForm()">${svg('plus',14)} Add income / expense / transfer</button>
+    ${state.ui.showTxForm ? `
+      <form class="card panel" onsubmit="App.submitTx(event)">
+        <div class="seg">
+          <button type="button" class="${state.ui.txType==='expense'?'active-expense':''}" onclick="App.setTxType('expense', this)">Expense</button>
+          <button type="button" class="${state.ui.txType==='income'?'active-income':''}" onclick="App.setTxType('income', this)">Income</button>
+          <button type="button" class="${state.ui.txType==='transfer'?'active-transfer':''}" onclick="App.setTxType('transfer', this)">Transfer</button>
+        </div>
+        <div id="tx-type-fields">${renderTxTypeFields()}</div>
+        <div class="row">
+          <input name="amount" type="number" step="0.001" min="0" placeholder="Amount (DT)">
+          <input name="date" type="date" value="${todayISO()}">
+          <input name="time" type="time" value="${nowHHMM()}">
+        </div>
+        <div class="muted" style="font-size:11px;margin:-6px 2px 10px;">Time is optional — clear it if you don't need it.</div>
+        <div class="row"><textarea name="note" rows="2" placeholder="Note (optional)"></textarea></div>
+        <div class="row"><input name="loggedBy" placeholder="Logged by (your name)" value="${esc(state.loggedBy)}"></div>
+        <button type="submit" class="btn btn-primary">Save entry</button>
+      </form>
+    ` : ''}
+
+    <div class="section-title">${svg('wallet',15)} Transactions</div>
+    <div class="row" style="margin-bottom:10px;">
+      <select onchange="App.setFilterAccount(this.value)">
+        <option value="all">All accounts</option>
+        ${ACCOUNTS.map(a=>`<option value="${a.id}" ${state.ui.filterAccount===a.id?'selected':''}>${a.label}</option>`).join('')}
+      </select>
+      <select onchange="App.setFilterType(this.value)">
+        <option value="all">All types</option>
+        <option value="income" ${state.ui.filterType==='income'?'selected':''}>Income</option>
+        <option value="expense" ${state.ui.filterType==='expense'?'selected':''}>Expense</option>
+        <option value="transfer" ${state.ui.filterType==='transfer'?'selected':''}>Transfer</option>
+      </select>
+      <input id="search-input" placeholder="Search…" value="${esc(state.ui.search)}" oninput="App.setSearch(this)">
+    </div>
+    <div class="card" style="padding:6px 12px;">${txRows}</div>
+  `;
+}
+
+function renderOpportunities() {
+  const sorted = [...state.opportunities].sort((a,b) => {
+    if (!a.deadline && !b.deadline) return 0;
+    if (!a.deadline) return 1;
+    if (!b.deadline) return -1;
+    return new Date(a.deadline) - new Date(b.deadline);
+  });
+  const list = sorted.length === 0 ? `<div class="empty">No opportunities logged yet.</div>` : sorted.map(o => {
+    const dLeft = daysUntil(o.deadline);
+    const urgent = dLeft !== null && dLeft >= 0 && dLeft <= 30 && o.status !== 'Won' && o.status !== 'Rejected';
+    return `
+      <div class="card opp-card" style="${urgent ? 'border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);' : ''}">
+        <div style="display:flex;justify-content:space-between;gap:10px;">
+          <div style="min-width:0;">
+            <div class="opp-name">${esc(o.name)}</div>
+            <div class="opp-tags">
+              <span class="pill">${esc(o.type)}</span>
+              <span class="pill" style="color:${STATUS_COLOR[o.status]};border-color:${STATUS_COLOR[o.status]}">${esc(o.status)}</span>
+              ${o.deadline ? `<span class="muted mono" style="font-size:11px;">Deadline ${fmtDate(o.deadline)}${dLeft!==null? ` (${dLeft>=0?dLeft+'d left':'past'})` : ''}</span>` : ''}
+            </div>
+            ${o.notes ? `<div class="opp-notes">${esc(o.notes)}</div>` : ''}
+            ${o.link ? `<a href="${esc(o.link)}" target="_blank" rel="noreferrer" style="font-size:12px;color:var(--gold-deep);display:inline-flex;align-items:center;gap:3px;margin-top:6px;">Open link ${svg('ext',11)}</a>` : ''}
+          </div>
+          <button class="icon-btn" onclick="App.deleteOpp('${o.id}')">${svg('trash',13)}</button>
+        </div>
+        <div class="status-row">
+          ${OPP_STATUSES.map(s => `<button class="${o.status===s?'active':''}" onclick="App.setOppStatus('${o.id}','${s}')">${s}</button>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <button class="btn ${state.ui.showOppForm?'btn-primary':''}" onclick="App.toggleOppForm()">${svg('plus',14)} Add opportunity</button>
+    ${state.ui.showOppForm ? `
+      <form class="card panel" onsubmit="App.submitOpp(event)">
+        <div class="row"><input name="name" placeholder="Name (e.g. H&M Global Change Award)"></div>
+        <div class="row">
+          <select name="type">${OPP_TYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
+          <select name="status">${OPP_STATUSES.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
+        </div>
+        <div class="row">
+          <input name="deadline" type="date">
+          <input name="link" placeholder="Link (optional)">
+        </div>
+        <div class="row"><textarea name="notes" rows="2" placeholder="Notes — fit, requirements, contacts…"></textarea></div>
+        <button type="submit" class="btn btn-primary">Save opportunity</button>
+      </form>
+    ` : ''}
+    <div style="margin-top:16px;">${list}</div>
+  `;
+}
+
+function renderNotes() {
+  const list = state.notes.length === 0 ? `<div class="empty">No notes yet.</div>` : state.notes.map(n => {
+    const open = state.ui.openNoteId === n.id;
+    return `
+      <div class="card note-card">
+        <div class="note-head" onclick="App.toggleNote('${n.id}')">
+          <div>
+            <div class="note-title">${esc(n.title)}</div>
+            <div class="note-date">${fmtDate(n.date)}</div>
+          </div>
+          <span style="transform:rotate(${open?180:0}deg);transition:transform .15s;">${svg('chevron',16)}</span>
+        </div>
+        ${open ? `
+          <div class="note-body">${esc(n.content)}</div>
+          <button class="btn btn-ghost" style="margin-top:8px;padding:0;font-size:11.5px;color:var(--red);" onclick="App.deleteNote('${n.id}')">${svg('trash',12)} Delete note</button>
+        ` : ''}
+      </div>`;
+  }).join('');
+
+  return `
+    <button class="btn ${state.ui.showNoteForm?'btn-primary':''}" onclick="App.toggleNoteForm()">${svg('plus',14)} Add note</button>
+    ${state.ui.showNoteForm ? `
+      <form class="card panel" onsubmit="App.submitNote(event)">
+        <div class="row"><input name="title" placeholder="Title"></div>
+        <div class="row"><textarea name="content" rows="4" placeholder="What should the next FO know?"></textarea></div>
+        <button type="submit" class="btn btn-primary">Save note</button>
+      </form>
+    ` : ''}
+    <div style="margin-top:16px;">${list}</div>
+  `;
+}
+
+function renderApAr() {
+  const b = balances();
+  const total = b.carte_bancaire + b.d17 + b.cash;
+  const pending = state.payables.filter(p => p.status === 'pending');
+  const totalPayable = pending.filter(p => p.kind === 'payable').reduce((s, p) => s + Number(p.amount || 0), 0);
+  const totalReceivable = pending.filter(p => p.kind === 'receivable').reduce((s, p) => s + Number(p.amount || 0), 0);
+  const projected = total - totalPayable + totalReceivable;
+
+  const sorted = [...state.payables].sort((a, b) => {
+    if (a.status !== b.status) return a.status === 'pending' ? -1 : 1;
+    if (!a.dueDate && !b.dueDate) return 0;
+    if (!a.dueDate) return 1;
+    if (!b.dueDate) return -1;
+    return new Date(a.dueDate) - new Date(b.dueDate);
+  });
+
+  const list = sorted.length === 0 ? `<div class="empty">Nothing logged yet.</div>` : sorted.map(p => {
+    if (state.ui.editingApArId === p.id) {
+      const d = state.ui.editApAr;
+      return `
+        <div class="card panel" style="margin-bottom:10px;">
+          <div class="seg" style="margin-bottom:10px;">
+            <button type="button" class="${d.kind==='payable'?'active-expense':''}" onclick="App.setEditApArKind('payable', this)">We owe (payable)</button>
+            <button type="button" class="${d.kind==='receivable'?'active-income':''}" onclick="App.setEditApArKind('receivable', this)">Owed to us (receivable)</button>
+          </div>
+          <form onsubmit="App.submitEditApAr(event,'${p.id}')">
+            <div class="row"><input name="description" value="${esc(d.description)}" placeholder="What's this for?"></div>
+            <div class="row"><input name="counterparty" value="${esc(d.counterparty||'')}" placeholder="Who (optional)"></div>
+            <div class="row">
+              <input name="amount" type="number" step="0.001" min="0" value="${d.amount}">
+              <input name="dueDate" type="date" value="${d.dueDate||''}">
+            </div>
+            <div class="field-label">EXPECTED ACCOUNT</div>
+            <div class="acct-pick">
+              ${ACCOUNTS.map(a => `<button type="button" class="${d.account===a.id?'active':''}" onclick="App.setEditApArAccount('${a.id}', this)">${a.label}</button>`).join('')}
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn" onclick="App.cancelEditApAr()">Cancel</button>
+            </div>
+          </form>
+        </div>`;
+    }
+    const acc = ACCOUNTS.find(a => a.id === p.account);
+    const dLeft = daysUntil(p.dueDate);
+    const overdue = p.status === 'pending' && dLeft !== null && dLeft < 0;
+    const settling = state.ui.settlingApArId === p.id;
+    const settleAcct = state.ui.settleApArAccount || p.account;
+    return `
+      <div class="card opp-card" style="${overdue ? 'border-color:var(--red);box-shadow:0 0 0 1px var(--red);' : ''}">
+        <div style="display:flex;justify-content:space-between;gap:10px;">
+          <div style="min-width:0;">
+            <div class="opp-name">${esc(p.description)}</div>
+            <div class="opp-tags">
+              <span class="pill" style="color:${p.kind === 'payable' ? 'var(--red)' : 'var(--green)'};border-color:${p.kind === 'payable' ? 'var(--red)' : 'var(--green)'}">${p.kind === 'payable' ? 'Payable' : 'Receivable'}</span>
+              <span class="pill" style="color:${p.status === 'settled' ? 'var(--green)' : 'var(--muted)'}">${p.status === 'settled' ? 'Settled' : 'Pending'}</span>
+              ${acc ? `<span class="pill">${acc.label}</span>` : ''}
+              ${p.dueDate ? `<span class="muted mono" style="font-size:11px;">Due ${fmtDate(p.dueDate)}${dLeft !== null && p.status === 'pending' ? ` (${dLeft >= 0 ? dLeft + 'd left' : 'overdue'})` : ''}</span>` : ''}
+            </div>
+            ${p.counterparty ? `<div class="opp-notes">${esc(p.counterparty)}</div>` : ''}
+            <div class="mono" style="font-size:13px;font-weight:700;margin-top:4px;">${fmtDT(p.amount)}</div>
+            ${p.status === 'settled' ? `<div class="muted" style="font-size:11px;margin-top:4px;">Settled ${fmtDate(p.settledDate)}</div>` : ''}
+          </div>
+          <div style="display:flex;gap:2px;flex-shrink:0;">
+            ${p.status === 'pending' ? `<button class="icon-btn" onclick="App.startEditApAr('${p.id}')">${svg('pencil', 13)}</button>` : ''}
+            <button class="icon-btn" onclick="App.deleteApAr('${p.id}')">${svg('trash', 13)}</button>
+          </div>
+        </div>
+        ${p.status === 'pending' ? `
+          <div style="margin-top:10px;">
+            <button class="btn ${settling ? 'btn-primary' : ''}" style="font-size:12px;padding:6px 10px;" onclick="App.toggleSettleApAr('${p.id}')">
+              ${p.kind === 'payable' ? 'Mark as paid' : 'Mark as received'}
+            </button>
+            ${settling ? `
+              <form onsubmit="App.confirmSettleApAr(event,'${p.id}')" style="margin-top:10px;">
+                <div class="field-label">${p.kind === 'payable' ? 'PAY FROM' : 'RECEIVE INTO'}</div>
+                <div class="acct-pick">
+                  ${ACCOUNTS.map(a => `<button type="button" class="${settleAcct === a.id ? 'active' : ''}" onclick="App.setSettleApArAccount('${a.id}', this)">${a.label}</button>`).join('')}
+                </div>
+                <div class="row"><input name="date" type="date" value="${todayISO()}"></div>
+                <button type="submit" class="btn btn-primary" style="font-size:12px;">Confirm &amp; record transaction</button>
+              </form>
+            ` : ''}
+          </div>
+        ` : ''}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="stat-grid">
+      <div class="card stat-card"><div class="stat-label">CURRENT TREASURY</div><div class="stat-value mono">${fmtDT(total)}</div></div>
+      <div class="card stat-card"><div class="stat-label">PENDING RECEIVABLE</div><div class="stat-value mono" style="color:var(--green)">${fmtDT(totalReceivable)}</div></div>
+      <div class="card stat-card"><div class="stat-label">PENDING PAYABLE</div><div class="stat-value mono" style="color:var(--red)">${fmtDT(totalPayable)}</div></div>
+      <div class="card stat-card"><div class="stat-label">PROJECTED AFTER SETTLING</div><div class="stat-value mono" style="color:${projected >= total ? 'var(--green)' : 'var(--red)'}">${fmtDT(projected)}</div></div>
+    </div>
+
+    <button class="btn ${state.ui.showApArForm ? 'btn-primary' : ''}" onclick="App.toggleApArForm()">${svg('plus', 14)} Add payable / receivable</button>
+    ${state.ui.showApArForm ? `
+      <form class="card panel" onsubmit="App.submitApAr(event)">
+        <div class="seg">
+          <button type="button" class="${state.ui.apArKind === 'payable' ? 'active-expense' : ''}" onclick="App.setApArKind('payable', this)">We owe (payable)</button>
+          <button type="button" class="${state.ui.apArKind === 'receivable' ? 'active-income' : ''}" onclick="App.setApArKind('receivable', this)">Owed to us (receivable)</button>
+        </div>
+        <div class="row"><input name="description" placeholder="What's this for? (e.g. Printing invoice)"></div>
+        <div class="row"><input name="counterparty" placeholder="Who (optional) — vendor, sponsor, member…"></div>
+        <div class="row">
+          <input name="amount" type="number" step="0.001" min="0" placeholder="Amount (DT)">
+          <input name="dueDate" type="date">
+        </div>
+        <div class="field-label">EXPECTED ACCOUNT</div>
+        <div class="acct-pick">
+          ${ACCOUNTS.map(a => `<button type="button" class="${state.ui.apArAccount === a.id ? 'active' : ''}" onclick="App.setApArAccount('${a.id}', this)">${a.label}</button>`).join('')}
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    ` : ''}
+
+    <div style="margin-top:16px;">${list}</div>
+  `;
+}
+
+function renderMembers() {
+  const totalMembers = state.members.length;
+  let totalCollected = 0, totalOutstanding = 0;
+  state.feeParticipants.forEach(p => {
+    if (p.status === 'paid') totalCollected += Number(p.amount || 0);
+    else totalOutstanding += Number(p.amount || 0);
+  });
+
+  const rosterChips = state.members.length === 0 ? `<div class="empty">No members yet.</div>` : `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${state.members.map(m => `
+        <span class="pill" style="padding:5px 6px 5px 5px;display:inline-flex;align-items:center;gap:6px;">
+          <span class="member-avatar" style="width:20px;height:20px;font-size:8.5px;background:${avatarColor(m.name)}">${initials(m.name)}</span>
+          ${esc(m.name)}
+          <button class="icon-btn" style="padding:0;" onclick="App.deleteMember('${m.id}')">${svg('x', 11)}</button>
+        </span>
+      `).join('')}
+    </div>`;
+
+  const events = state.feeEvents.length === 0 ? `<div class="empty">No fee events yet. Add one below — e.g. "Membership Fees 2026" — then add who's part of it and check off who's paid.</div>` : state.feeEvents.map(ev => {
+    const open = state.ui.openFeeEventId === ev.id;
+    const participants = state.feeParticipants.filter(p => p.eventId === ev.id);
+    const paidCount = participants.filter(p => p.status === 'paid').length;
+    const totalCount = participants.length;
+    const ratioColor = totalCount === 0 ? 'var(--muted)' : (paidCount === totalCount ? 'var(--green)' : (paidCount === 0 ? 'var(--red)' : 'var(--gold-deep)'));
+    const evAcc = ACCOUNTS.find(a => a.id === ev.account);
+    const addingRoster = state.ui.addingParticipantsFor === ev.id;
+    const addingCustom = state.ui.addingCustomNameFor === ev.id;
+
+    const participantRows = participants.length === 0 ? `<div class="empty">Nobody added yet — pick from the roster or add a name below.</div>` : participants.map(p => {
+      const name = p.memberId ? ((state.members.find(m => m.id === p.memberId) || {}).name || 'Member') : (p.customName || 'Guest');
+      const isPaid = p.status === 'paid';
+      return `
+        <div class="fee-row">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+            <span class="member-avatar" style="width:24px;height:24px;font-size:9.5px;background:${avatarColor(name)}">${initials(name)}</span>
+            <div style="min-width:0;">
+              <div class="fee-label">${esc(name)}</div>
+              ${isPaid ? `<div class="muted" style="font-size:10px;">Paid ${fmtDate(p.paidDate)}</div>` : ''}
+            </div>
+          </div>
+          ${isPaid
+            ? `<div class="mono" style="font-size:12.5px;font-weight:700;margin-right:4px;">${fmtDT(p.amount)}</div>`
+            : `<input type="number" step="0.001" min="0" class="fee-amount-input" value="${p.amount}" onchange="App.setParticipantAmount('${p.id}', this.value)">`
+          }
+          <button class="toggle-pill ${isPaid ? 'paid' : 'unpaid'}" onclick="App.togglePaid('${p.id}')">${isPaid ? 'Paid' : 'Unpaid'}</button>
+          <button class="icon-btn" onclick="App.removeParticipant('${p.id}')">${svg('x', 13)}</button>
+        </div>`;
+    }).join('');
+
+    const rosterTickList = state.members.length === 0 ? `<div class="muted" style="font-size:12px;padding:6px 2px;">No members in the roster yet.</div>` : state.members.map(m => {
+      const existing = participants.find(p => p.memberId === m.id);
+      const isPaidAlready = existing && existing.status === 'paid';
+      return `
+        <label class="tick-row">
+          <input type="checkbox" ${existing ? 'checked' : ''} ${isPaidAlready ? 'disabled' : ''} onchange="App.toggleParticipantFromRoster('${ev.id}','${m.id}', this.checked)">
+          <span class="member-avatar" style="width:20px;height:20px;font-size:8.5px;background:${avatarColor(m.name)}">${initials(m.name)}</span>
+          ${esc(m.name)}
+          ${isPaidAlready ? `<span class="muted" style="font-size:10px;margin-left:auto;">already paid</span>` : ''}
+        </label>`;
+    }).join('');
+
+    return `
+      <div class="card member-card" style="margin-bottom:10px;">
+        <div class="note-head" onclick="App.toggleFeeEventOpen('${ev.id}')">
+          <div>
+            <div class="note-title">${esc(ev.name)}</div>
+            <div class="mono" style="font-size:11px;color:${ratioColor};font-weight:700;">${paidCount}/${totalCount} paid · ${fmtDT(ev.amount)} suggested · into ${evAcc ? evAcc.label : ev.account}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="icon-btn" onclick="event.stopPropagation(); App.deleteFeeEvent('${ev.id}')">${svg('trash', 13)}</button>
+            <span style="transform:rotate(${open ? 180 : 0}deg);transition:transform .15s;">${svg('chevron', 16)}</span>
+          </div>
+        </div>
+        ${open ? `
+          <div style="margin-top:12px;">${participantRows}</div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            <button class="btn ${addingRoster ? 'btn-primary' : ''}" style="font-size:11.5px;padding:5px 10px;" onclick="App.toggleAddParticipants('${ev.id}')">${svg('plus', 12)} Add from roster</button>
+            <button class="btn ${addingCustom ? 'btn-primary' : ''}" style="font-size:11.5px;padding:5px 10px;" onclick="App.toggleAddCustomName('${ev.id}')">${svg('plus', 12)} Add name</button>
+          </div>
+
+          ${addingRoster ? `<div class="tick-list">${rosterTickList}</div>` : ''}
+          ${addingCustom ? `
+            <form onsubmit="App.submitCustomParticipant(event,'${ev.id}')" class="row" style="margin-top:10px;">
+              <input name="customName" placeholder="Name (not in roster)">
+              <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">Add</button>
+            </form>
+          ` : ''}
+        ` : ''}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="stat-grid">
+      <div class="card stat-card"><div class="stat-label">MEMBERS</div><div class="stat-value mono">${totalMembers}</div></div>
+      <div class="card stat-card"><div class="stat-label">COLLECTED</div><div class="stat-value mono" style="color:var(--green)">${fmtDT(totalCollected)}</div></div>
+      <div class="card stat-card"><div class="stat-label">OUTSTANDING</div><div class="stat-value mono" style="color:var(--red)">${fmtDT(totalOutstanding)}</div></div>
+    </div>
+
+    <div class="section-title">Roster</div>
+    <div class="card" style="margin-bottom:18px;">
+      ${rosterChips}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn ${state.ui.showMemberForm ? 'btn-primary' : ''}" onclick="App.toggleMemberForm()">${svg('plus', 14)} Add member</button>
+        <button class="btn ${state.ui.showBulkMemberForm ? 'btn-primary' : ''}" onclick="App.toggleBulkMemberForm()">${svg('plus', 14)} Add a list</button>
+      </div>
+      ${state.ui.showMemberForm ? `
+        <form onsubmit="App.submitMember(event)" class="row" style="margin-top:10px;">
+          <input name="name" placeholder="Member name">
+          <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">Add</button>
+        </form>
+      ` : ''}
+      ${state.ui.showBulkMemberForm ? `
+        <form onsubmit="App.submitBulkMembers(event)" style="margin-top:10px;">
+          <textarea name="names" rows="6" placeholder="Paste names, one per line — e.g.&#10;Ahmed Ben Ali&#10;Sara Trabelsi&#10;Youssef Gharbi"></textarea>
+          <div class="muted" style="font-size:11px;margin:6px 2px 10px;">One name per line (commas also work). Anything already in the roster is skipped automatically.</div>
+          <button type="submit" class="btn btn-primary">Add them all</button>
+        </form>
+      ` : ''}
+    </div>
+
+    <div class="section-title">Fee events</div>
+    <button class="btn ${state.ui.showFeeEventForm ? 'btn-primary' : ''}" onclick="App.toggleFeeEventForm()">${svg('plus', 14)} Add fee event</button>
+    ${state.ui.showFeeEventForm ? `
+      <form class="card panel" onsubmit="App.submitFeeEvent(event)">
+        <div class="row"><input name="name" placeholder="Event name (e.g. Membership Fees 2026)"></div>
+        <div class="row"><input name="amount" type="number" step="0.001" min="0" placeholder="Suggested amount per person (DT)"></div>
+        <div class="field-label">MONEY GOES INTO</div>
+        <div class="acct-pick">
+          ${ACCOUNTS.map(a => `<button type="button" class="${state.ui.feeEventAccount === a.id ? 'active' : ''}" onclick="App.setFeeEventAccount('${a.id}', this)">${a.label}</button>`).join('')}
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    ` : ''}
+
+    <div style="margin-top:16px;">${events}</div>
+  `;
+}
+
+function renderInsights() {
+  const b = balances();
+  const total = b.carte_bancaire + b.d17 + b.cash;
+  const insights = [];
+
+  const lowest = ACCOUNTS.reduce((m, a) => (b[a.id] < b[m.id] ? a : m), ACCOUNTS[0]);
+  insights.push({ icon: 'wallet', title: `${fmtDT(total)} across 3 accounts`,
+    desc: `${lowest.label} is currently the lowest at ${fmtDT(b[lowest.id])}.` });
+
+  const upcoming = state.opportunities.filter(o => {
+    const d = daysUntil(o.deadline);
+    return d !== null && d >= 0 && d <= 30 && o.status !== 'Won' && o.status !== 'Rejected';
+  });
+  insights.push({ icon: 'clock', title: upcoming.length ? `${upcoming.length} opportunity deadline${upcoming.length>1?'s':''} within 30 days` : 'No opportunity deadlines within 30 days',
+    desc: upcoming.length ? upcoming.map(o => `${o.name} (${fmtDate(o.deadline)})`).join(', ') : 'Nothing urgent on the funding side right now.' });
+
+  const last30 = state.transactions.filter(t => { const d = daysUntil(t.date); return d !== null && d >= -30 && d <= 0; });
+  const inSum = last30.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  const outSum = last30.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+  insights.push({ icon: 'up', title: `Last 30 days: ${fmtDT(inSum)} in, ${fmtDT(outSum)} out`,
+    desc: `Net ${fmtDT(inSum-outSum)} over ${last30.length} entr${last30.length===1?'y':'ies'}.` });
+
+  if (state.transactions.length) {
+    const last = state.transactions[0];
+    let label, amountStr;
+    if (last.type === 'transfer') {
+      const fromAcc = ACCOUNTS.find(a=>a.id===last.fromAccount);
+      const toAcc = ACCOUNTS.find(a=>a.id===last.toAccount);
+      label = `${fromAcc?fromAcc.label:last.fromAccount} → ${toAcc?toAcc.label:last.toAccount}`;
+      amountStr = fmtDT(last.amount);
+    } else {
+      label = esc(last.category);
+      amountStr = `${last.type==='income'?'+':'-'}${fmtDT(last.amount)}`;
+    }
+    insights.push({ icon: 'search', title: `Most recent entry: ${label}`,
+      desc: `${amountStr} on ${fmtDate(last.date)}${last.loggedBy?` · logged by ${esc(last.loggedBy)}`:''}.` });
+  }
+
+  insights.push({ icon: 'bulb', title: `${state.notes.length} handover note${state.notes.length===1?'':'s'} on file`,
+    desc: 'Check the Handover notes tab before your first sponsorship push — it holds the constraints every FO needs to know.' });
+
+  return `
+    <div class="card" style="margin-bottom:14px;background:#FFFBF0;border-color:#F3DFA6;">
+      <div style="font-size:12.5px;color:var(--gold-deep);font-weight:700;">Auto-generated from your data — not AI. Plain calculations, updated instantly as you add entries.</div>
+    </div>
+    ${insights.map(i => `
+      <div class="card insight-card">
+        <div class="insight-icon">${svg(i.icon,16)}</div>
+        <div>
+          <div class="insight-title">${i.title}</div>
+          <div class="insight-desc">${i.desc}</div>
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="section-title">${svg('send',15)} AI chat <span class="muted" style="font-weight:500;font-size:11.5px;">— optional, uses your own free Gemini key</span></div>
+    ${(!state.geminiKey || state.ui.editingKey) ? `
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Add a free Gemini API key to enable live chat</div>
+        <div class="muted" style="font-size:12px;margin-bottom:10px;line-height:1.55;">
+          Get one free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" style="color:var(--gold-deep);font-weight:600;">aistudio.google.com/apikey</a> — Google account, no card, about two minutes.
+          The key is saved only on this device: it's never included in Export/Import backups, so no one else who opens this file sees it.
+        </div>
+        <form onsubmit="App.saveGeminiKey(event)" class="row">
+          <input name="geminiKey" type="password" placeholder="Paste your Gemini API key" autocomplete="off">
+          <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">${svg('key',13)} Save key</button>
+        </form>
+      </div>
+    ` : `
+      <div class="card chat-panel">
+        <div class="chat-scroll" id="chat-scroll">
+          ${state.chatMessages.length === 0 ? `
+            <div class="muted" style="font-size:12.5px;margin-bottom:10px;">Ask about balances, deadlines, or ask it to draft something for the next FO.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              ${STARTER_PROMPTS.map((p,idx) => `<button type="button" class="starter-chip" onclick="App.sendChat(STARTER_PROMPTS[${idx}])">${esc(p)}</button>`).join('')}
+            </div>
+          ` : state.chatMessages.map((m, idx) => {
+              if (m.role === 'user' && state.ui.editingChatIndex === idx) {
+                return `
+                  <form class="chat-edit-form" onsubmit="App.submitEditChatMsg(event, ${idx})">
+                    <textarea name="msg" rows="2" autofocus>${esc(m.content)}</textarea>
+                    <div style="display:flex;gap:6px;margin-top:6px;">
+                      <button type="submit" class="btn btn-primary" style="font-size:11.5px;padding:5px 10px;">Resend</button>
+                      <button type="button" class="btn" style="font-size:11.5px;padding:5px 10px;" onclick="App.cancelEditChatMsg()">Cancel</button>
+                    </div>
+                  </form>`;
+              }
+              if (m.role === 'user') {
+                return `
+                  <div class="chat-row-user">
+                    <button class="icon-btn chat-edit-btn" onclick="App.startEditChatMsg(${idx})">${svg('pencil', 12)}</button>
+                    <div class="bubble bubble-user">${esc(m.content)}</div>
+                  </div>`;
+              }
+              return `<div class="bubble bubble-ai">${mdLite(m.content)}</div>`;
+            }).join('')}
+          ${state.chatLoading ? `<div class="bubble bubble-ai muted">thinking…</div>` : ''}
+        </div>
+        <form class="chat-form" onsubmit="event.preventDefault(); App.sendChat(this.msg.value); this.msg.value='';">
+          <input name="msg" placeholder="Ask the assistant…" autocomplete="off">
+          <button type="submit" class="btn btn-primary" style="flex:0 0 auto;">${svg('send',14)}</button>
+        </form>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:14px;">
+        <button type="button" class="btn btn-ghost" style="font-size:11.5px;padding:0;color:var(--muted);" onclick="App.toggleKeyEdit()">Change key</button>
+        <button type="button" class="btn btn-ghost" style="font-size:11.5px;padding:0;color:var(--muted);" onclick="App.clearGeminiKey()">Remove saved key</button>
+      </div>
+    `}
+  `;
+}
+
+function renderContentOnly() {
+  const el = document.getElementById('content');
+  if (state.activeTab === 'dashboard') el.innerHTML = renderDashboard();
+  else if (state.activeTab === 'treasury') el.innerHTML = renderTreasury();
+  else if (state.activeTab === 'apar') el.innerHTML = renderApAr();
+  else if (state.activeTab === 'members') el.innerHTML = renderMembers();
+  else if (state.activeTab === 'opportunities') el.innerHTML = renderOpportunities();
+  else if (state.activeTab === 'notes') el.innerHTML = renderNotes();
+  else el.innerHTML = renderInsights();
+}
+
+function render() {
+  renderTabs();
+  renderContentOnly();
+  if (state.activeTab === 'treasury') {
+    const s = document.getElementById('search-input');
+    if (s && document.activeElement !== s) s.value = state.ui.search;
+  }
+  const chatScroll = document.getElementById('chat-scroll');
+  if (chatScroll) chatScroll.scrollTop = chatScroll.scrollHeight;
+}
+
+// ============== LOCK SCREEN (device PIN — protects local viewing only) ==============
+const lockUi = { attempts: 0, lockedUntil: 0, error: '' };
+
+function hasPinSet() { return !!localStorage.getItem('etbs_pin_hash'); }
+
+async function storePin(pin) {
+  const salt = bufToB64(crypto.getRandomValues(new Uint8Array(16)));
+  const hash = await sha256Hex(salt + pin);
+  localStorage.setItem('etbs_pin_salt', salt);
+  localStorage.setItem('etbs_pin_hash', hash);
+}
+async function pinMatches(pin) {
+  const salt = localStorage.getItem('etbs_pin_salt') || '';
+  const hash = await sha256Hex(salt + pin);
+  return hash === localStorage.getItem('etbs_pin_hash');
+}
+
+async function unlockApp() {
+  document.getElementById('lock-screen').innerHTML = '';
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app-wrap').style.display = '';
+  loadAll();
+  render();
+  renderSyncBadge();
+  await bootSyncPull();
+  applyOpportunityImportOnce();
+  applyApArImportOnce();
+  render();
+}
+
+async function bootSyncPull() {
+  if (!syncReady()) return;
+  syncStatus = 'syncing';
+  renderSyncBadge();
+  try {
+    await cloudPullAll();
+    syncStatus = 'idle';
+    render();
+  } catch (err) {
+    syncStatus = 'error';
+    console.error('initial cloud pull failed', err);
+  }
+  renderSyncBadge();
+}
+
+function renderLock(mode) {
+  const el = document.getElementById('lock-screen');
+  el.style.display = '';
+  document.getElementById('app-wrap').style.display = 'none';
+
+  if (mode === 'setup') {
+    el.innerHTML = `
+      <div class="lock-wrap"><div class="lock-card">
+        <div class="lock-logo"><img src="${LOGO_DATA_URI}" alt="logo"></div>
+        <div class="lock-title">Create a PIN</div>
+        <div class="lock-sub">Protects this app on this device. Numbers only, 4–8 digits. Remember it — there's no email recovery, only a full local reset.</div>
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="pin-input" id="pin-a" placeholder="New PIN">
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="pin-input" id="pin-b" placeholder="Confirm PIN">
+        <div class="lock-error">${esc(lockUi.error)}</div>
+        <button class="btn btn-primary" style="width:100%;" onclick="Lock.trySetup()">Set PIN & continue</button>
+      </div></div>`;
+  } else if (mode === 'enter') {
+    const locked = Date.now() < lockUi.lockedUntil;
+    el.innerHTML = `
+      <div class="lock-wrap"><div class="lock-card">
+        <div class="lock-logo"><img src="${LOGO_DATA_URI}" alt="logo"></div>
+        <div class="lock-title">Enter PIN</div>
+        <div class="lock-sub">Enactus TBS Treasury — this device is locked.</div>
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="pin-input" id="pin-enter" placeholder="PIN" ${locked?'disabled':''}>
+        <div class="lock-error">${locked ? 'Too many attempts. Wait 30 seconds and try again.' : esc(lockUi.error)}</div>
+        <button class="btn btn-primary" style="width:100%;" ${locked?'disabled':''} onclick="Lock.tryEnter()">Unlock</button>
+        <button type="button" class="lock-link" onclick="Lock.startForgot()">Forgot PIN?</button>
+      </div></div>`;
+  } else if (mode === 'forgot') {
+    el.innerHTML = `
+      <div class="lock-wrap"><div class="lock-card">
+        <div class="lock-logo"><img src="${LOGO_DATA_URI}" alt="logo"></div>
+        <div class="lock-title">Reset this device?</div>
+        <div class="lock-warning">This erases the PIN <b>and all local data</b> on this device — balances, transactions, opportunities, notes. If you have an exported backup file, you can restore it afterwards with its own password.</div>
+        <button class="btn" style="width:100%;color:var(--red);margin-bottom:8px;" onclick="Lock.confirmForgot()">Erase and start fresh</button>
+        <button type="button" class="lock-link" onclick="Lock.cancelForgot()">Cancel, go back</button>
+      </div></div>`;
+  }
+  const first = el.querySelector('input:not([disabled])');
+  if (first) { first.focus(); first.addEventListener('keydown', e => { if (e.key === 'Enter') { if (mode==='setup') Lock.trySetup(); else if (mode==='enter') Lock.tryEnter(); } }); }
+}
+
+const Lock = {
+  async trySetup() {
+    const a = document.getElementById('pin-a').value.trim();
+    const b = document.getElementById('pin-b').value.trim();
+    if (!/^[0-9]{4,8}$/.test(a)) { lockUi.error = 'PIN must be 4–8 numbers.'; renderLock('setup'); return; }
+    if (a !== b) { lockUi.error = "PINs don't match."; renderLock('setup'); return; }
+    lockUi.error = '';
+    await storePin(a);
+    unlockApp();
+  },
+  async tryEnter() {
+    if (Date.now() < lockUi.lockedUntil) return;
+    const val = document.getElementById('pin-enter').value.trim();
+    const ok = await pinMatches(val);
+    if (ok) { lockUi.attempts = 0; lockUi.error = ''; unlockApp(); return; }
+    lockUi.attempts++;
+    lockUi.error = 'Incorrect PIN.';
+    if (lockUi.attempts >= 5) {
+      lockUi.lockedUntil = Date.now() + 30000;
+      lockUi.attempts = 0;
+      setTimeout(() => renderLock('enter'), 30000);
+    }
+    renderLock('enter');
+  },
+  startForgot() { renderLock('forgot'); },
+  cancelForgot() { lockUi.error = ''; renderLock('enter'); },
+  confirmForgot() {
+    ['etbs_transactions','etbs_adjustments','etbs_opportunities','etbs_notes','etbs_logged_by','etbs_pin_hash','etbs_pin_salt'].forEach(k => localStorage.removeItem(k));
+    lockUi.attempts = 0; lockUi.lockedUntil = 0; lockUi.error = '';
+    renderLock('setup');
+  },
+  async changePin() {
+    if (!CRYPTO_OK) { alert('PIN protection is unavailable in this browser context.'); return; }
+    const current = await askPin({ title: 'Confirm current PIN', confirmLabel: 'Continue' });
+    if (current === null) return;
+    if (!(await pinMatches(current))) { alert('That PIN is incorrect.'); return; }
+    const next = await askPin({ title: 'Choose a new PIN', confirmLabel: 'Next' });
+    if (next === null) return;
+    const confirmNext = await askPin({ title: 'Confirm new PIN', confirmLabel: 'Save' });
+    if (confirmNext === null) return;
+    if (next !== confirmNext) { alert("PINs didn't match — nothing changed."); return; }
+    await storePin(next);
+    alert('PIN updated.');
+  },
+  lockNow() {
+    if (!CRYPTO_OK) { alert('PIN protection is unavailable in this browser context.'); return; }
+    document.getElementById('app-wrap').style.display = 'none';
+    lockUi.error = ''; lockUi.attempts = 0;
+    renderLock('enter');
+  },
+};
+
+function renderSyncBadge() {
+  const el = document.getElementById('sync-badge');
+  if (!el) return;
+  if (!syncConnected()) { el.textContent = ''; el.className = 'sync-badge'; return; }
+  if (!syncReady()) { el.textContent = '☁ Not synced yet'; el.className = 'sync-badge'; return; }
+  if (syncStatus === 'syncing') { el.textContent = '☁ Syncing…'; el.className = 'sync-badge'; return; }
+  if (syncStatus === 'error') { el.textContent = '☁ Sync failed — tap Cloud sync'; el.className = 'sync-badge err'; return; }
+  const last = syncLastAt();
+  el.textContent = last ? '☁ Synced ' + new Date(last).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '☁ Connected';
+  el.className = 'sync-badge ok';
+}
+
+function renderSyncModal() {
+  const overlay = document.createElement('div');
+  overlay.className = 'sync-modal-overlay';
+  overlay.id = 'sync-modal-overlay';
+
+  let inner;
+  if (!syncConnected()) {
+    inner = `
+      <div class="sync-modal-title">Connect cloud sync</div>
+      <div class="sync-modal-sub">Paste the Web App URL and passphrase from your Google Apps Script backend. Any device that connects with the same two values shares the same data.</div>
+      <form onsubmit="Sync.saveConnection(event)">
+        <div class="sync-modal-row"><input name="url" placeholder="Web App URL (ends in /exec)" required></div>
+        <div class="sync-modal-row"><input name="secret" placeholder="Passphrase" required></div>
+        <div class="sync-modal-actions">
+          <button type="submit" class="btn btn-primary">Test &amp; save</button>
+          <button type="button" class="btn" onclick="Sync.close()">Cancel</button>
+        </div>
+      </form>`;
+  } else if (!syncReady()) {
+    inner = `
+      <div class="sync-modal-title">Connected — one more step</div>
+      <div class="sync-modal-sub">Which device has the real data right now?</div>
+      <div class="sync-modal-actions">
+        <button class="btn btn-primary" onclick="Sync.pushInitial()">This device has it — push to the sheet</button>
+        <button class="btn" onclick="Sync.pullInitial()">The sheet already has it — pull it here</button>
+        <button class="btn btn-ghost" style="color:var(--red);" onclick="Sync.disconnect()">Disconnect</button>
+        <button type="button" class="btn" onclick="Sync.close()">Cancel</button>
+      </div>`;
+  } else {
+    const last = syncLastAt();
+    inner = `
+      <div class="sync-modal-title">Cloud sync connected</div>
+      <div class="sync-status-line">${last ? 'Last synced ' + esc(new Date(last).toLocaleString()) : 'Not synced yet'}</div>
+      <div class="sync-modal-actions">
+        <button class="btn btn-primary" onclick="Sync.pullNow()">Pull latest now</button>
+        <button class="btn btn-ghost" style="color:var(--red);" onclick="Sync.disconnect()">Disconnect this device</button>
+        <button type="button" class="btn" onclick="Sync.close()">Close</button>
+      </div>`;
+  }
+
+  overlay.innerHTML = `<div class="sync-modal" style="position:relative;">
+    <button class="sync-modal-close" onclick="Sync.close()">${svg('x', 16)}</button>
+    ${inner}
+  </div>`;
+  document.body.appendChild(overlay);
+  const firstInput = overlay.querySelector('input');
+  if (firstInput) setTimeout(() => firstInput.focus(), 0);
+}
+
+const Sync = {
+  open() { renderSyncModal(); },
+  close() {
+    const el = document.getElementById('sync-modal-overlay');
+    if (el) el.remove();
+  },
+  async saveConnection(e) {
+    e.preventDefault();
+    const f = e.target;
+    const url = f.url.value.trim();
+    const secret = f.secret.value.trim();
+    if (!url || !secret) return;
+    const btn = f.querySelector('button[type="submit"]');
+    btn.disabled = true; btn.textContent = 'Testing…';
+    localStorage.setItem('etbs_sync_url', url);
+    localStorage.setItem('etbs_sync_secret', secret);
+    try {
+      await cloudGetAll();
+    } catch (err) {
+      alert('Could not connect: ' + (err.message || err) + '\n\nDouble-check the URL and passphrase, and that the script is deployed with access set to "Anyone".');
+      localStorage.removeItem('etbs_sync_url');
+      localStorage.removeItem('etbs_sync_secret');
+      btn.disabled = false; btn.textContent = 'Test & save';
+      return;
+    }
+    Sync.close();
+    renderSyncModal();
+    renderSyncBadge();
+  },
+  async pushInitial() {
+    if (!confirm('This uploads everything currently on this device to the shared sheet, replacing whatever is there. Continue?')) return;
+    try {
+      await cloudPushAll();
+      localStorage.setItem('etbs_sync_ready', '1');
+      alert('Uploaded. Other devices can now connect with the same URL and passphrase and pull this data down.');
+      Sync.close();
+      renderSyncBadge();
+    } catch (err) { alert('Push failed: ' + (err.message || err)); }
+  },
+  async pullInitial() {
+    if (!confirm("This replaces this device's local data with whatever is currently in the sheet. Continue?")) return;
+    try {
+      await cloudPullAll();
+      localStorage.setItem('etbs_sync_ready', '1');
+      render();
+      alert('Pulled the latest data from the sheet.');
+      Sync.close();
+      renderSyncBadge();
+    } catch (err) { alert('Pull failed: ' + (err.message || err)); }
+  },
+  async pullNow() {
+    try {
+      await cloudPullAll();
+      render();
+      Sync.close();
+      renderSyncModal();
+      renderSyncBadge();
+    } catch (err) { alert('Pull failed: ' + (err.message || err)); }
+  },
+  disconnect() {
+    if (!confirm('Disconnect cloud sync on this device? Local data stays put, but this device will stop sharing changes with the others.')) return;
+    ['etbs_sync_url', 'etbs_sync_secret', 'etbs_sync_ready', 'etbs_sync_last'].forEach(k => localStorage.removeItem(k));
+    Sync.close();
+    renderSyncBadge();
+  },
+};
+
+// ============== MONTHLY REPORT ==============
+function buildMonthlyReportHTML(monthStr, preparedBy) {
+  const [y, m] = monthStr.split('-').map(Number);
+  const monthLabel = new Date(y, m - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const startISO = monthStr + '-01';
+  const lastDay = new Date(y, m, 0).getDate();
+  const endISO = monthStr + '-' + String(lastDay).padStart(2, '0');
+  const dayBefore = addDaysISO(startISO, -1);
+
+  const monthTx = state.transactions
+    .filter(t => t.date && t.date >= startISO && t.date <= endISO)
+    .slice()
+    .sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
+
+  const income = monthTx.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount || 0), 0);
+  const expense = monthTx.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount || 0), 0);
+
+  const opening = balancesAsOf(dayBefore);
+  const closing = balancesAsOf(endISO);
+  const openingTotal = opening.carte_bancaire + opening.d17 + opening.cash;
+  const closingTotal = closing.carte_bancaire + closing.d17 + closing.cash;
+
+  const txRows = monthTx.length === 0 ? `<tr><td colspan="5" class="report-empty">No transactions recorded this month.</td></tr>` : monthTx.map(t => {
+    let desc, acctLabel;
+    if (t.type === 'transfer') {
+      const fromAcc = ACCOUNTS.find(a => a.id === t.fromAccount);
+      const toAcc = ACCOUNTS.find(a => a.id === t.toAccount);
+      desc = 'Transfer';
+      acctLabel = `${fromAcc ? fromAcc.label : t.fromAccount} → ${toAcc ? toAcc.label : t.toAccount}`;
+    } else {
+      const acc = ACCOUNTS.find(a => a.id === t.account);
+      desc = esc(t.category) + (t.note ? ' — ' + esc(t.note) : '');
+      acctLabel = acc ? acc.label : t.account;
+    }
+    const amtClass = t.type === 'income' ? 'report-pos' : (t.type === 'expense' ? 'report-neg' : '');
+    const amtPrefix = t.type === 'income' ? '+' : (t.type === 'expense' ? '-' : '');
+    return `<tr><td>${fmtDate(t.date)}</td><td>${acctLabel}</td><td>${desc}</td><td>${esc(t.loggedBy || '')}</td><td class="num ${amtClass}">${amtPrefix}${fmtDT(t.amount)}</td></tr>`;
+  }).join('');
+
+  return `
+    <div class="report-page">
+      <div class="report-header">
+        <div>
+          <div class="report-org">ENACTUS TBS</div>
+          <div class="report-title">Monthly Financial Report</div>
+          <div class="report-month">${esc(monthLabel)}</div>
+        </div>
+      </div>
+      <div class="report-meta">Generated ${esc(new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }))}${preparedBy ? ' · Prepared by ' + esc(preparedBy) : ''}</div>
+
+      <h3>Summary</h3>
+      <table class="report-table">
+        <tr><td>Opening balance (${esc(fmtDate(dayBefore))})</td><td class="num">${fmtDT(openingTotal)}</td></tr>
+        <tr><td>Total income</td><td class="num report-pos">+${fmtDT(income)}</td></tr>
+        <tr><td>Total expenses</td><td class="num report-neg">-${fmtDT(expense)}</td></tr>
+        <tr><td><strong>Closing balance (${esc(fmtDate(endISO))})</strong></td><td class="num"><strong>${fmtDT(closingTotal)}</strong></td></tr>
+      </table>
+
+      <h3>Balances by account</h3>
+      <table class="report-table">
+        <tr><th>Account</th><th class="num">Opening</th><th class="num">Closing</th></tr>
+        ${ACCOUNTS.map(a => `<tr><td>${a.label}</td><td class="num">${fmtDT(opening[a.id])}</td><td class="num">${fmtDT(closing[a.id])}</td></tr>`).join('')}
+      </table>
+
+      <h3>All transactions</h3>
+      <table class="report-table report-tx-table">
+        <tr><th>Date</th><th>Account</th><th>Description</th><th>Logged by</th><th class="num">Amount</th></tr>
+        ${txRows}
+      </table>
+    </div>
+  `;
+}
+
+function renderReportModal() {
+  const overlay = document.createElement('div');
+  overlay.className = 'report-modal-overlay';
+  overlay.id = 'report-modal-overlay';
+  const thisMonth = todayISO().slice(0, 7);
+  const savedName = localStorage.getItem('etbs_report_prepared_by') || '';
+  overlay.innerHTML = `
+    <div class="report-modal">
+      <div class="report-modal-title">Monthly report</div>
+      <div class="report-modal-sub">Pick a month. It opens your browser's print dialog — choose "Save as PDF" there to get the file. In that dialog, also switch off "Headers and footers" so the browser doesn't add its own title/date line on top of the report.</div>
+      <input type="month" id="report-month-input" value="${thisMonth}" style="margin-bottom:10px;">
+      <input type="text" id="report-preparedby-input" placeholder="Prepared by (full name)" value="${esc(savedName)}">
+      <div class="report-modal-actions">
+        <button type="button" class="btn" onclick="Report.close()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="Report.generate()">Generate</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+const Report = {
+  open() { renderReportModal(); },
+  close() {
+    const el = document.getElementById('report-modal-overlay');
+    if (el) el.remove();
+  },
+  generate() {
+    const monthVal = document.getElementById('report-month-input').value;
+    if (!monthVal) return;
+    const preparedBy = document.getElementById('report-preparedby-input').value.trim();
+    if (preparedBy) localStorage.setItem('etbs_report_prepared_by', preparedBy);
+    document.getElementById('report-print-area').innerHTML = buildMonthlyReportHTML(monthVal, preparedBy);
+    Report.close();
+
+    const [y, m] = monthVal.split('-').map(Number);
+    const monthLabel = new Date(y, m - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    const originalTitle = document.title;
+    document.title = 'Monthly Financial Report - ' + monthLabel;
+    const restoreTitle = () => { document.title = originalTitle; window.removeEventListener('afterprint', restoreTitle); };
+    window.addEventListener('afterprint', restoreTitle);
+
+    setTimeout(() => window.print(), 50);
+  },
+};
+
+// Apply the club logo to the favicon, home-screen icon, and header badge.
+document.getElementById('favicon-link').href = LOGO_DATA_URI;
+document.getElementById('apple-touch-link').href = LOGO_DATA_URI;
+document.getElementById('header-logo').innerHTML = `<img src="${LOGO_DATA_URI}" alt="logo">`;
+
+const CRYPTO_OK = !!(window.crypto && window.crypto.subtle);
+if (CRYPTO_OK) {
+  renderLock(hasPinSet() ? 'enter' : 'setup');
+} else {
+  // No PIN lock / encrypted backups available in this browsing context (e.g. some in-app
+  // browsers). Open the app anyway rather than showing a broken screen.
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app-wrap').style.display = '';
+  console.warn('Web Crypto unavailable in this context — PIN lock and encrypted backups are disabled. Try opening this file directly in Chrome or Safari instead of an in-app browser.');
+  loadAll();
+  render();
+  renderSyncBadge();
+  bootSyncPull().then(() => {
+    applyOpportunityImportOnce();
+    applyApArImportOnce();
+    render();
+  });
+}
+</script>
+</body>
+</html>
